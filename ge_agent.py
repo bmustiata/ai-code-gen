@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Dict, Optional
 
 from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase
 from openai import AsyncOpenAI
@@ -22,13 +22,22 @@ class GeAgent:
     def __init__(self,
                  instructions_file: str,
                  tools: List[Any]=[],
-                 output_type: type[Any] | AgentOutputSchemaBase | None = None):
+                 output_type: type[Any] | AgentOutputSchemaBase | None = None,
+                 data: Optional[Dict[str, str]] = None):
 
         with open(instructions_file, encoding="UTF-8") as f:
-            instruction_lines = f.readlines()
+            instructions = f.read()
+
+        if data:
+            instructions = instructions.format(**data)
+
+        instruction_lines = instructions.splitlines()
 
         self.title = instruction_lines[0]
-        self.instructions = "\n".join(instruction_lines[2:])  # FIXME: find the first line non-empty
+
+        # FIXME: find the first line non-empty
+        # FIXME: read the model from here
+        self.instructions = "\n".join(instruction_lines[2:])
 
         self.tools = tools
 

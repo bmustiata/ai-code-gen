@@ -7,11 +7,11 @@ workspace_folder: str = "/tmp/x"
 
 
 @function_tool
-def write_file(file_name: str, content: str) -> None:
+def write_file(file_name: str, content: str) -> str:
     full_file_name = ensure_file_path(file_name)
 
     if not full_file_name:
-        return
+        return f"{file_name} written successfully"
 
     try:
         with open(full_file_name, "wt", encoding="utf-8") as f:
@@ -21,9 +21,15 @@ def write_file(file_name: str, content: str) -> None:
         print(f"unable to write {full_file_name}")
         print(e)
 
+    return f"{file_name} written successfully"
+
 
 @function_tool
 def read_file(file_name: str) -> str:
+    return read_file_impl(file_name)
+
+
+def read_file_impl(file_name: str) -> str:
     try:
         full_file_name = ensure_file_path(file_name)
 
