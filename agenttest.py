@@ -1,18 +1,35 @@
 import asyncio
+from typing import List
+
+import pydantic
 
 from ge_agent import GeAgent
-from workspace_tools import write_file
+from workspace_tools import write_file, read_file
+
+
+class FileInfo(pydantic.BaseModel):
+    filename: str
+    description: str
+
+
+class FileList(pydantic.BaseModel):
+    files: List[FileInfo]
 
 
 async def main():
     # user_input = read_multiline_message("> ")
-    with open("ctest.txt", "rt", encoding="utf-8") as f:
-        user_input = f.read()
+    # with open("ctest.txt", "rt", encoding="utf-8") as f:
+    #     user_input = f.read()
 
-    print(":brain: creating an execution plan ... ", end=None)
-    plan_result = await create_execution_plan(user_input)
+    # print(":brain: creating an execution plan ... ", end=None)
+    # plan_result = await create_execution_plan(user_input)
+    # print("DONE")
+    # print(plan_result)
+
+    print(":brain: making a list of the files to be created ... ", end=None)
+    file_list = await extract_file_list()
     print("DONE")
-    print(plan_result)
+    print(file_list)
 
 
 def read_multiline_message(prompt: str) -> str:
@@ -32,6 +49,12 @@ async def create_execution_plan(user_input: str) -> str:
     planner = GeAgent("instructions/planner.txt", tools=[write_file])
     return await planner.run(user_input)
 
+
+async def extract_file_list() -> FileList:
+    file_lister = GeAgent("instructions/file_lister.txt",
+                          tools=[read_file],
+                          output_type=FileList)
+    return await file_lister.run("Read the list of files")
 
 
 if __name__ == "__main__":

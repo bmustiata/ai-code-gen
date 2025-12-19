@@ -23,9 +23,20 @@ def write_file(file_name: str, content: str) -> None:
 
 
 @function_tool
-def read_file(full_file_name: str) -> str:
-    with open(full_file_name, "rt", encoding="utf-8") as f:
-        return f.read()
+def read_file(file_name: str) -> str:
+    try:
+        full_file_name = ensure_file_path(file_name)
+
+        if not full_file_name:
+            print(f"unable to read file: {full_file_name}")
+            return "FILE DOES NOT EXISTS"
+
+        with open(full_file_name, "rt", encoding="utf-8") as f:
+            return f.read()
+    except Exception as e:
+        print(f"unable to read file: {file_name}")
+        print(e)
+        return "FILE DOES NOT EXISTS"
 
 
 def ensure_file_path(workspace_file_name: str) -> Optional[str]:
