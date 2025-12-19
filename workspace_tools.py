@@ -11,7 +11,7 @@ def write_file(file_name: str, content: str) -> str:
     full_file_name = ensure_file_path(file_name)
 
     if not full_file_name:
-        return f"{file_name} written successfully"
+        return f"{file_name} was written!"
 
     try:
         with open(full_file_name, "wt", encoding="utf-8") as f:
@@ -21,7 +21,7 @@ def write_file(file_name: str, content: str) -> str:
         print(f"unable to write {full_file_name}")
         print(e)
 
-    return f"{file_name} written successfully"
+    return f"{file_name} was written!"
 
 
 @function_tool

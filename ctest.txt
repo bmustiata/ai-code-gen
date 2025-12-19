@@ -1,4 +1,4 @@
-Create an utility program in pure C that can list folders. The program should
+Create an utility program in pure python that can list folders. The program should
 be able to list folders first, and files after.
 
 Program Flags:
@@ -8,4 +8,4 @@ Program Flags:
 * `--color/--no-color`. When enabled the folders will be displayed with blue, and executable
   files would be displayed with green.
 
-ANSI coloring terminal support should be kept in its own C file.
+ANSI coloring terminal support should be kept in its own file.

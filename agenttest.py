@@ -18,13 +18,13 @@ class FileList(pydantic.BaseModel):
 
 async def main():
     # user_input = read_multiline_message("> ")
-    # with open("ctest.txt", "rt", encoding="utf-8") as f:
-    #     user_input = f.read()
+    with open("ctest.txt", "rt", encoding="utf-8") as f:
+        user_input = f.read()
 
-    # print(":brain: creating an execution plan ... ", end=None)
-    # plan_result = await create_execution_plan(user_input)
-    # print("DONE")
-    # print(plan_result)
+    print(":brain: creating an execution plan ... ", end=None)
+    plan_result = await create_execution_plan(user_input)
+    print("DONE")
+    print(plan_result)
 
     print(":brain: making a list of the files to be created ... ", end=None)
     file_list = await extract_file_list()
