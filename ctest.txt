@@ -1,4 +1,4 @@
-Create an utility program in pure python that can list folders. The program should
+Create an utility program in pure C that can list folders. The program should
 be able to list folders first, and files after.
 
 Program Flags:

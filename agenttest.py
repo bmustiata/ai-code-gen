@@ -49,8 +49,13 @@ def read_multiline_message(prompt: str) -> str:
 
 
 async def create_execution_plan(user_input: str) -> str:
-    planner = GeAgent("instructions/planner.txt", tools=[write_file])
-    return await planner.run(user_input)
+    planner = GeAgent("instructions/planner.txt",
+                      tools=[write_file],
+                      data={
+                          "requirements": user_input
+                      })
+
+    return await planner.run("Write the PLAN.md")
 
 
 async def extract_file_list() -> FileList:
