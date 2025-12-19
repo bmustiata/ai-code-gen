@@ -29,7 +29,6 @@ async def main():
     print(":brain: making a list of the files to be created ... ", end=None)
     file_list = await extract_file_list()
     print("DONE")
-    print(file_list)
 
     for file in file_list.files:
         print(f":brain: writing {file.filename} ... ", end=None)

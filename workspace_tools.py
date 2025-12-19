@@ -8,6 +8,14 @@ workspace_folder: str = "/tmp/x"
 
 @function_tool
 def write_file(file_name: str, content: str) -> str:
+    """
+    Writes the content into the file as UTF-8. Characters are written
+    as they are, no escaping is necessary.
+
+    :param file_name:
+    :param content:
+    :return:
+    """
     full_file_name = ensure_file_path(file_name)
 
     if not full_file_name:
