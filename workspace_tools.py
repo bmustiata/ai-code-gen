@@ -16,6 +16,20 @@ def write_file(file_name: str, content: str) -> str:
     :param content:
     :return:
     """
+    return write_file_impl(file_name, content)
+
+
+@function_tool
+def read_file(file_name: str) -> str:
+    """
+    Reads the content of the file.
+    :param file_name:
+    :return:
+    """
+    return read_file_impl(file_name)
+
+
+def write_file_impl(file_name: str, content: str) -> str:
     full_file_name = ensure_file_path(file_name)
 
     if not full_file_name:
@@ -30,11 +44,6 @@ def write_file(file_name: str, content: str) -> str:
         print(e)
 
     return f"{file_name} was written!"
-
-
-@function_tool
-def read_file(file_name: str) -> str:
-    return read_file_impl(file_name)
 
 
 def read_file_impl(file_name: str) -> str:
@@ -62,9 +71,9 @@ def ensure_file_path(workspace_file_name: str) -> Optional[str]:
         if workspace_file_name and workspace_file_name.startswith("/"):
             workspace_file_name = "." + workspace_file_name
 
-        full_file_name = os.path.join(workspace_folder, workspace_file_name)
+        full_file_name = os.path.abspath(os.path.join(workspace_folder, workspace_file_name))
         full_dir_name = os.path.dirname(full_file_name)
-        os.makedirs(os.path.dirname(full_dir_name), exist_ok=True)
+        os.makedirs(full_dir_name, exist_ok=True)
 
         return full_file_name
     except Exception as e:
