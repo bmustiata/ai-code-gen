@@ -13,8 +13,6 @@ You received the following specification for the program to be implemented:
 From this plan, you need to _implement only_ {file_name} ({file_description}).
 All the other files will be written by someone else.
 
-Write the file using the provided tool.
-
 The code should be written to the best of your abilities, using clean code.
 
 * Try to keep methods legible and small.

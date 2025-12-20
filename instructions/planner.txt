@@ -48,7 +48,7 @@ Make sure there's no ambiguities in the user requirements. When in doubt, ask th
 exactly it wants. When you're sure call the tool to write the `PLAN.md`. Try to always be concise.
 
 If the program contains information that needs to be shared across multiple files of the
-implementation (grpc definitions, DB schema definitions, shared data structures, etc),
+implementation (grpc definitions, DB schema definitions, shared data structures, header files, etc),
 they should be clearly and concisely documented in the plan's documentation.
 
 Only generate the `PLAN.md` with the short description, file list, and functional/structural documentation.

@@ -4,12 +4,17 @@ from typing import List
 import pydantic
 
 from ge_agent import GeAgent
-from workspace_tools import write_file, read_file, read_file_impl
+from workspace_tools import read_file_impl, write_file_impl, extract_api
 
 
 class FileInfo(pydantic.BaseModel):
     filename: str
     description: str
+
+
+class FileResult(pydantic.BaseModel):
+    filename: str
+    content: str
 
 
 class FileList(pydantic.BaseModel):
@@ -35,6 +40,7 @@ async def main():
         await generate_file(file)
         print("DONE")
 
+
 def read_multiline_message(prompt: str) -> str:
     print(prompt, end="")
 
@@ -50,17 +56,19 @@ def read_multiline_message(prompt: str) -> str:
 
 async def create_execution_plan(user_input: str) -> str:
     planner = GeAgent("instructions/planner.txt",
-                      tools=[write_file],
+                      output_type=FileResult,
                       data={
                           "requirements": user_input
                       })
 
-    return await planner.run("Write the PLAN.md")
+    execution_plan: FileResult = await planner.run("Write the PLAN.md")
+    write_file_impl("/PLAN.md", execution_plan.content)
+
+    return execution_plan.content
 
 
 async def extract_file_list() -> FileList:
     file_lister = GeAgent("instructions/file_lister.txt",
-                          tools=[read_file],
                           data={
                               "plan": read_file_impl("/PLAN.md"),
                           },
@@ -70,14 +78,20 @@ async def extract_file_list() -> FileList:
 
 async def generate_file(file: FileInfo) -> None:
     coder = GeAgent("instructions/coder.txt",
-                    tools=[write_file],
+                    output_type=FileResult,
                     data={
                         "file_name": file.filename,
                         "file_description": file.description,
                         "plan": read_file_impl("/PLAN.md"),
-                    })
+                    },
+                    tools=[
+                        extract_api,
+                    ],
+                    )
 
-    return await coder.run(f"Write the {file.filename}")
+    file_result: FileResult = await coder.run(f"Write the {file.filename}")
+    write_file_impl(file.filename, file_result.content)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+   asyncio.run(main())
+

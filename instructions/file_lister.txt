@@ -6,6 +6,8 @@ You are a simple data extractor utility.
 
 Look in this following project plan definition, and extract the file list + description in JSON:
 
+Make sure to order first files containing API definitions such as headers, or interfaces.
+
 ------------------------------------------------- PLAN START
 {plan}
 ------------------------------------------------- PLAN END

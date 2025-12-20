@@ -3,6 +3,8 @@ from typing import Optional
 
 from agents import function_tool
 
+from ge_agent import GeAgent
+
 workspace_folder: str = "/tmp/x"
 
 
@@ -27,6 +29,29 @@ def read_file(file_name: str) -> str:
     :return:
     """
     return read_file_impl(file_name)
+
+
+@function_tool
+async def extract_api(file_name: str) -> str:
+    """
+    Get the API definitions from the given filename.
+    :param file_name:
+    :return:
+    """
+    print("EXTRACTING API!!")
+
+    # Create an API extractor agent
+    api_extractor = GeAgent("instructions/api_extractor.txt",
+                           output_type=str,
+                           data={
+                               "file_name": file_name,
+                               "file_content": read_file_impl(file_name)
+                           })
+
+    # Run the agent to extract the API
+    api_content = await api_extractor.run(f"Extract the API for {file_name}")
+
+    return api_content
 
 
 def write_file_impl(file_name: str, content: str) -> str:

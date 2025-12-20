@@ -1,3 +1,4 @@
+import re
 from typing import List, Any, Dict, Optional, Tuple
 
 from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings
@@ -34,7 +35,7 @@ class GeAgent:
             agent_file_content = f.read()
 
         if data:
-            agent_file_content = agent_file_content.format(**data)
+            agent_file_content = replace_values(agent_file_content, data)
 
         agent_file_lines = agent_file_content.splitlines()
 
@@ -108,3 +109,18 @@ def extract_metadata(agent_lines: List[str]) -> Tuple[Dict[str, str], List[str]]
         metadata[kv[0]] = kv[1]
 
     raise Exception("unable to find any instructions, for ended normally")
+
+def replace_values(template: str, values: Dict[str, str]) -> str:
+    """
+    Replaces `{var_name}` values from the template, to the values passed in the
+    dictionary. If a variable is missing, it is ignored, and the unchanged
+    `{missing_var}` is left in the original code. Empty `{}` are also allowed
+    in the template.
+    """
+    def replace_match(match):
+        key = match.group(1)
+        if key in values:
+            return values[key]
+        return match.group(0)
+
+    return re.sub(r'\{([^}]+)\}', replace_match, template)

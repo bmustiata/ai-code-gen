@@ -10,3 +10,5 @@ Program Flags:
 ANSI coloring terminal support should be kept in its own file.
 
 The project should be buildable with CMake.
+
+Make sure headers are also generated for non-main C files.
