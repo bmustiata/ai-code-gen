@@ -5,7 +5,7 @@ from agents import function_tool
 
 from ge_agent import GeAgent
 
-workspace_folder: str = "/tmp/x"
+workspace_folder: str = "/tmp/javax/"
 
 
 @function_tool
@@ -32,13 +32,13 @@ def read_file(file_name: str) -> str:
 
 
 @function_tool
-async def extract_api(file_name: str) -> str:
+async def read_api(file_name: str) -> str:
     """
-    Get the API definitions from the given filename.
+    Read the API definitions from the given filename.
     :param file_name:
     :return:
     """
-    print("EXTRACTING API!!")
+    print(f"  ➡️ reading API for {file_name}")
 
     # Create an API extractor agent
     api_extractor = GeAgent("instructions/api_extractor.txt",
@@ -63,7 +63,7 @@ def write_file_impl(file_name: str, content: str) -> str:
     try:
         with open(full_file_name, "wt", encoding="utf-8") as f:
             f.write(content)
-        print(f":file: :checkmark: {full_file_name} written")
+        print(f"  📄 {full_file_name} written")
     except Exception as e:
         print(f"unable to write {full_file_name}")
         print(e)

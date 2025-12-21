@@ -20,3 +20,7 @@ The code should be written to the best of your abilities, using clean code.
 * If there's something not obvious document using comments why a certain decision was made.
 * String or numeric constants that repeat have move them in a shared constant.
 * Make sure used functions returns matches the type where it's used.
+
+IMPORTANT:
+1. You must use the `read_api` tool if you use functions or classes from another file.
+2. Write the file you generate using the `write_file` tool.
