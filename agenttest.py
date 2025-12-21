@@ -23,21 +23,21 @@ class FileList(pydantic.BaseModel):
 
 async def main():
     # user_input = read_multiline_message("> ")
-    with open("golang.txt", "rt", encoding="utf-8") as f:
+    with open("ctest.txt", "rt", encoding="utf-8") as f:
         user_input = f.read()
 
-    print("💭 creating an execution plan ... ", end=None)
-    plan_result = await create_execution_plan(user_input)
-    print(plan_result)
+    print("⚙️ designing a spec ... ", end=None)
+    spec_result = await create_specification(user_input)
+    print(spec_result)
 
-    print("💭 making a list of the files to be created ... ", end=None)
+    print("⚙️ making a list of the files to be created ... ", end=None)
     file_list = await extract_file_list()
 
     for file in file_list.files:
         # file = FileInfo(
         #     filename="/src/main/java/com/folderlist/Main.java",
         #     description="Entry point that processes arguments and invokes listing logic")
-        print(f"💭 generating {file.filename} ... ", end=None)
+        print(f"⚙️ generating {file.filename} ... ", end=None)
         await generate_file(file)
 
 
@@ -54,23 +54,23 @@ def read_multiline_message(prompt: str) -> str:
     return message
 
 
-async def create_execution_plan(user_input: str) -> str:
-    planner = GeAgent("instructions/planner.txt",
+async def create_specification(user_input: str) -> str:
+    specgen = GeAgent("instructions/specgen.txt",
                       output_type=FileResult,
                       data={
                           "requirements": user_input
                       })
 
-    execution_plan: FileResult = await planner.run("Write the PLAN.md")
-    write_file_impl("/PLAN.md", execution_plan.content)
+    spec_file: FileResult = await specgen.run("Write the SPEC.md")
+    write_file_impl("/SPEC.md", spec_file.content)
 
-    return execution_plan.content
+    return spec_file.content
 
 
 async def extract_file_list() -> FileList:
     file_lister = GeAgent("instructions/file_lister.txt",
                           data={
-                              "plan": read_file_impl("/PLAN.md"),
+                              "spec": read_file_impl("/SPEC.md"),
                           },
                           output_type=FileList)
     return await file_lister.run("Read the list of files")
@@ -81,7 +81,7 @@ async def generate_file(file: FileInfo) -> None:
                     data={
                         "file_name": file.filename,
                         "file_description": file.description,
-                        "plan": read_file_impl("/PLAN.md"),
+                        "spec": read_file_impl("/SPEC.md"),
                     },
                     tools=[
                         write_file,
