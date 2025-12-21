@@ -23,7 +23,7 @@ class FileList(pydantic.BaseModel):
 
 async def main():
     # user_input = read_multiline_message("> ")
-    with open("javatest.txt", "rt", encoding="utf-8") as f:
+    with open("golang.txt", "rt", encoding="utf-8") as f:
         user_input = f.read()
 
     print("💭 creating an execution plan ... ", end=None)
