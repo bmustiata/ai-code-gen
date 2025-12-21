@@ -6,7 +6,9 @@ You are a simple data extractor utility.
 
 Look in this following project plan definition, and extract the file list + description in JSON:
 
-Make sure to order first files containing API definitions such as headers, or interfaces.
+Make sure to order first files containing API definitions such as headers, interfaces
+or files containing common symbols. They should be later written first, since the other
+files depend on them.
 
 ------------------------------------------------- PLAN START
 {plan}
