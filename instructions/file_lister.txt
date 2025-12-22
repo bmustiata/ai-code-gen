@@ -1,5 +1,5 @@
 title=File List Extractor
-model=qwen3:30b
+model=qwen3-coder:30b
 
 You are a simple data extractor utility.
 

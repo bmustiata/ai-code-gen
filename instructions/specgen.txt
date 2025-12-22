@@ -1,5 +1,5 @@
 title=SpecGen
-model=qwen3:30b
+model=qwen3-coder:30b
 
 You are a specification generator agent tool. You help creating a design plan for software. You need to understand
 the requirements, and come up with a project specification and implementation plan (SPEC.md). The spec has three sections:

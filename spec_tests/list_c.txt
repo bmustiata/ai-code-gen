@@ -1,0 +1,14 @@
+Create an utility program in pure C that can list folders. The program should
+be able to list folders first, and files after.
+
+Program Flags:
+* `-l` flag, that when enabled it would make the program list
+  the files with extra data if it's folder, link, etc and its file size.
+* `--color/--no-color`. When enabled the folders will be displayed with blue, and executable
+  files would be displayed with green.
+
+ANSI coloring terminal support should be kept in its own file.
+
+The project should be buildable with CMake.
+
+Make sure headers are also generated for non-main C files.

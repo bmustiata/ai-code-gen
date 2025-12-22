@@ -1,8 +1,10 @@
 import asyncio
 from typing import List
 
+import click
 import pydantic
 
+import workspace_tools
 from ge_agent import GeAgent
 from workspace_tools import read_file_impl, write_file_impl, read_api, write_file
 
@@ -33,17 +35,32 @@ class SpecCheckResult(pydantic.BaseModel):
     """
 
 
-async def main():
-    # user_input = read_multiline_message("> ")
-    with open("ctest.txt", "rt", encoding="utf-8") as f:
-        user_input = f.read()
+@click.command()
+@click.option("--user-spec",
+              help="User specification file. What do you want to be generated?")
+@click.option("--workspace", "-w",
+              help="Workspace folder where to create the files.",
+              default="workspace")
+def event_loop_main(user_spec: str, workspace: str) -> None:
+   asyncio.run(main(user_spec, workspace))
+
+
+async def main(user_spec: str, workspace: str) -> None:
+    workspace_tools.workspace_folder = workspace
+
+    if user_spec:
+        with open(user_spec, "rt", encoding="utf-8") as f:
+            user_input = f.read()
+    else:
+        user_input = read_multiline_message("> ")
+
     #
-    # print("⚙️ designing a spec ... ", end=None)
-    # spec_result = await create_specification(user_input)
+    print("⚙️ designing a spec ... ")
+    spec_result = await create_specification(user_input)
     spec_result = read_file_impl("/SPEC.md")
 
     while True:
-        print("⚙️ (re-)checking the specification ... ", end=None)
+        print("⚙️ (re-)checking the specification ... ")
         check_spec = await check_generated_specification(user_input, spec_result)
 
         if check_spec.valid:
@@ -51,18 +68,18 @@ async def main():
 
         print(f"  ❌ spec was not valid:\n{check_spec.reason}")
 
-        print("⚙️ fixing the specification ... ", end=None)
+        print("⚙️ fixing the specification ... ")
         spec_result = await fix_failed_specification(user_input, spec_result, check_spec)
         print(spec_result)
 
-    print("⚙️ making a list of the files to be created ... ", end=None)
+    print("⚙️ making a list of the files to be created ... ")
     file_list = await extract_file_list()
 
     for file in file_list.files:
         # file = FileInfo(
         #     filename="/src/main/java/com/folderlist/Main.java",
         #     description="Entry point that processes arguments and invokes listing logic")
-        print(f"⚙️ generating {file.filename} ... ", end=None)
+        print(f"⚙️ generating {file.filename} ... ")
         await generate_file(file)
 
 
@@ -143,5 +160,4 @@ async def generate_file(file: FileInfo) -> None:
     await coder.run(f"Write the {file.filename}")
 
 if __name__ == "__main__":
-   asyncio.run(main())
-
+   event_loop_main()
