@@ -58,3 +58,16 @@ Here's the requirements:
 ------------------------------------------------- REQUIREMENTS START
 {requirements}
 ------------------------------------------------- REQUIREMENTS END
+
+Note that you already created the following SPEC file before:
+------------------------------------------------- SPEC START
+{spec}
+------------------------------------------------- SPEC END
+
+But this file was rejected with the following reason:
+
+------------------------------------------------- REJECTION REASON START
+{rejection_reason}
+------------------------------------------------- REJECTION REASON END
+
+Check the reason and fix the spec.

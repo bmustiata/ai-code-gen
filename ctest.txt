@@ -1,14 +1,21 @@
-Create an utility program in pure C that can list folders. The program should
-be able to list folders first, and files after.
+Create a FastAPI Python REST endpoint for a document store that's stored in sqlite.
+Make a small frontend for it using Vue3 + Vite.
 
-Program Flags:
-* `-l` flag, that when enabled it would make the program list
-  the files with extra data if it's folder, link, etc and its file size.
-* `--color/--no-color`. When enabled the folders will be displayed with blue, and executable
-  files would be displayed with green.
+1. Create the DB schema:
+   - collection - contains a set of documents: has an id, title (max 256 chars), and description (max 2048 chars).
+   - document - is an actual document from the collection: has a collection_id, id, title (max 256 chars), description (max 2048 chars)
+   - document_part - is a section from the document: has a document_id, id, parent_id (if this is a child of another document part, can be the root one), parent_order, title, description (max 2048 chars), content (clob)
+2. Create the REST operations, for all three tables:
+   a. collection,
+   b. documents and
+   c. document_parts.
+   Split them in different files.
+3. Create a Vue3 frontend that allows doing CRUD operations against the collection, documents and document_parts.
 
-ANSI coloring terminal support should be kept in its own file.
+Structure in the following subfolders:
+- db_schema/*   - schema design document + actual SQLs if needed to create the tables
+- doc-backend/* - here's the python FastAPI implementation of the REST endpoint.
+- doc-frontend/* - here's the Vue3 JS implementation of the Web Frontend.
+- SPEC.md - the spec you'll create
+- README.md - some readme explaining how to run the project
 
-The project should be buildable with CMake.
-
-Make sure headers are also generated for non-main C files.

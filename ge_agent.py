@@ -9,6 +9,8 @@ local_client = AsyncOpenAI(
     api_key="EMPTY",
 )
 
+agent_index = 1
+
 
 class GeAgent:
     """
@@ -52,17 +54,24 @@ class GeAgent:
             openai_client=local_client,
         )
 
+        global agent_index
+        agent_index += 1
+
         self.agent = Agent(
-            name=self.title,
+            name=self.title + f' #{agent_index}',
             instructions=self.instructions,
             tools=tools,
             model=local_model,
             output_type=output_type,
-            model_settings=ModelSettings(top_p=0.1),
+            model_settings=ModelSettings(top_p=0.1, max_tokens=32768),
         )
 
     async def run(self, user_input: str) -> Any:
-        result = await Runner.run(self.agent, input=user_input)
+        result = await Runner.run(
+            self.agent,
+            input=user_input,
+            max_turns=30,  # how many tools to call
+        )
         return result.final_output
 
 

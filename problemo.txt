@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/home/raptor/projects/ai/agenttest/agenttest.py", line 95, in <module>
+    asyncio.run(main())
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/raptor/projects/ai/agenttest/agenttest.py", line 41, in main
+    await generate_file(file)
+  File "/home/raptor/projects/ai/agenttest/agenttest.py", line 92, in generate_file
+    await coder.run(f"Write the {file.filename}")
+  File "/home/raptor/projects/ai/agenttest/ge_agent.py", line 65, in run
+    result = await Runner.run(self.agent, input=user_input)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/raptor/projects/ai/agenttest/.venv/lib/python3.12/site-packages/agents/run.py", line 343, in run
+    return await runner.run(
+           ^^^^^^^^^^^^^^^^^
+  File "/home/raptor/projects/ai/agenttest/.venv/lib/python3.12/site-packages/agents/run.py", line 595, in run
+    raise MaxTurnsExceeded(f"Max turns ({max_turns}) exceeded")
+agents.exceptions.MaxTurnsExceeded: Max turns (10) exceeded

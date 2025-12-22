@@ -1,6 +1,5 @@
 title=Coder
 model=qwen3-coder:30b
-#model=deepseek-coder:33b
 
 You are a coder.
 

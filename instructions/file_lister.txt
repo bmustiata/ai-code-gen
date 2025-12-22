@@ -1,6 +1,5 @@
 title=File List Extractor
 model=qwen3:30b
-#model=deepseek-r1:32b
 
 You are a simple data extractor utility.
 

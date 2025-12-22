@@ -21,14 +21,39 @@ class FileList(pydantic.BaseModel):
     files: List[FileInfo]
 
 
+class SpecCheckResult(pydantic.BaseModel):
+    valid: bool
+    """
+    True if the specification matches the requirements. False otherwise.
+    """
+    reason: str
+    """
+    If the specification isn't matching the requirements, here's in contained,
+    why it isn't matching.
+    """
+
+
 async def main():
     # user_input = read_multiline_message("> ")
     with open("ctest.txt", "rt", encoding="utf-8") as f:
         user_input = f.read()
+    #
+    # print("⚙️ designing a spec ... ", end=None)
+    # spec_result = await create_specification(user_input)
+    spec_result = read_file_impl("/SPEC.md")
 
-    print("⚙️ designing a spec ... ", end=None)
-    spec_result = await create_specification(user_input)
-    print(spec_result)
+    while True:
+        print("⚙️ (re-)checking the specification ... ", end=None)
+        check_spec = await check_generated_specification(user_input, spec_result)
+
+        if check_spec.valid:
+            break
+
+        print(f"  ❌ spec was not valid:\n{check_spec.reason}")
+
+        print("⚙️ fixing the specification ... ", end=None)
+        spec_result = await fix_failed_specification(user_input, spec_result, check_spec)
+        print(spec_result)
 
     print("⚙️ making a list of the files to be created ... ", end=None)
     file_list = await extract_file_list()
@@ -62,6 +87,32 @@ async def create_specification(user_input: str) -> str:
                       })
 
     spec_file: FileResult = await specgen.run("Write the SPEC.md")
+    write_file_impl("/SPEC.md", spec_file.content)
+
+    return spec_file.content
+
+
+async def check_generated_specification(user_input: str, spec: str) -> SpecCheckResult:
+    spec_check = GeAgent("instructions/spec_check.txt",
+                      output_type=SpecCheckResult,
+                      data={
+                          "requirements": user_input,
+                          "spec": spec,
+                      })
+
+    return await spec_check.run("Validate the current specification against the user requirements. Be concise.")
+
+
+async def fix_failed_specification(user_input: str, spec_result: str, check_spec: SpecCheckResult) -> str:
+    specgen = GeAgent("instructions/specgen.txt",
+                      output_type=FileResult,
+                      data={
+                          "requirements": user_input,
+                          "spec": spec_result,
+                          "rejection_reason": check_spec.reason,
+                      })
+
+    spec_file: FileResult = await specgen.run("Fix the specification from SPEC.md")
     write_file_impl("/SPEC.md", spec_file.content)
 
     return spec_file.content
