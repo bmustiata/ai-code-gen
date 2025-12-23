@@ -14,11 +14,12 @@ The spec should have 3 main sections:
 Your job is to see if the specification matches the user requirements, and if there's no missing
 parts or ambiguities.
 
-Go over the user requirements, and do the following:
-1. cross-reference if all the sections are filled with information matching the user requirements.
-2. see if there's no ambiguities for the developers on what each file is supposed to contain.
-3. check for any other possible sources of error between the requirements and the spec.
-4. check if there's missing files that should be present in the spec.
+Go over the user requirements, and ensure the following (reject the spec if any of them isn't matching):
+1. Cross-reference if all the sections are filled with information matching the user requirements.
+2. See if there's no ambiguities for the developers on what each file is supposed to contain.
+3. Check for any other possible sources of error between the requirements and the SPEC.md.
+4. Check if there's missing files that should be present in the SPEC.md.
+5. Ensure that any file the user specifically requested to be created is present in the SPEC.md.
 
 If the specification is valid and matches the user requirements, and you don't find any problems,
 mark the result as valid.

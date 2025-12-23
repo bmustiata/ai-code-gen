@@ -7,6 +7,8 @@ Program Flags:
 * `--color/--no-color`. When enabled the folders will be displayed with blue, and executable
   files would be displayed with green.
 
+It must have a README file where you explain the usage and build of the project.
+
 ANSI coloring terminal support should be kept in its own file.
 
 The project should be buildable with CMake.

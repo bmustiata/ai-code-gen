@@ -5,9 +5,9 @@ You are a simple data extractor utility.
 
 Look in this following project specification, and extract the file list + description in JSON:
 
-Make sure to order first files containing API definitions such as headers, interfaces
-or files containing common symbols. They should be later written first, since the other
-files depend on them.
+Order the files in the order they should be implemented by the developer. Start with shared
+common things such as interfaces, headers, grpc definitions, SQL files, etc. Anything that gets
+used from somewhere else, goes higher on the list than the file where it's used.
 
 ------------------------------------------------- SPEC START
 {spec}
