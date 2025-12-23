@@ -1,5 +1,5 @@
 import os.path
-from typing import Optional
+from typing import Optional, Dict
 
 from agents import function_tool
 
@@ -30,6 +30,8 @@ def read_file(file_name: str) -> str:
     """
     return read_file_impl(file_name)
 
+api_cache: Dict[str, str] = dict()
+
 
 @function_tool
 async def read_api(file_name: str) -> str:
@@ -38,7 +40,13 @@ async def read_api(file_name: str) -> str:
     :param file_name:
     :return:
     """
+    global api_cache
+
     print(f"  ➡️ reading API for {file_name}")
+
+    full_file_name = get_full_file_name(file_name)
+    if full_file_name in api_cache:
+        return api_cache[full_file_name]
 
     # Create an API extractor agent
     api_extractor = GeAgent("instructions/api_extractor.txt",
@@ -55,7 +63,12 @@ async def read_api(file_name: str) -> str:
 
 
 def write_file_impl(file_name: str, content: str) -> str:
+    global api_cache
+
     full_file_name = ensure_file_path(file_name)
+
+    if full_file_name in api_cache:
+        del api_cache[full_file_name]
 
     if not full_file_name:
         return f"{file_name} was written!"
@@ -105,3 +118,15 @@ def ensure_file_path(workspace_file_name: str) -> Optional[str]:
         print(f"unable to create file {workspace_file_name}")
         print(e)
         return None
+
+
+def get_full_file_name(workspace_file_name: str) -> str:
+    """
+    Computes the absolute path of a workspace file
+    """
+    if workspace_file_name and workspace_file_name.startswith("/"):
+        workspace_file_name = "." + workspace_file_name
+
+    full_file_name = os.path.abspath(os.path.join(workspace_folder, workspace_file_name))
+
+    return full_file_name
