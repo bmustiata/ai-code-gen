@@ -50,6 +50,10 @@ async def main(user_spec: str, workspace: str) -> None:
     file_list = await extract_file_list()
 
     for file in file_list.files:
+        if workspace_tools.file_exists_in_workspace(file.filename):
+            print(f"⏭️ skipped generating {file.filename} ... ")
+            continue
+
         print(f"⚙️ generating {file.filename} ... ")
         await generate_file(file)
 

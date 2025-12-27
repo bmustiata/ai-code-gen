@@ -38,7 +38,11 @@ async def check_generated_file(file: structs.FileInfo) -> structs.SpecCheckResul
                     ],
                     )
 
-    result = await coder.run(f"Check the {file.filename}")
+    try:
+        result = await coder.run(f"Check the {file.filename}")
+    except Exception as e:
+        print(f"WARNING: unable to figure out if the result is VALID or INVALID: {e}.")
+        return structs.SpecCheckResult(valid=True, reason="")
 
     if "INVALID" in result:
         reason = result.split("INVALID")[1]

@@ -130,3 +130,12 @@ def get_full_file_name(workspace_file_name: str) -> str:
     full_file_name = os.path.abspath(os.path.join(workspace_folder, workspace_file_name))
 
     return full_file_name
+
+
+def file_exists_in_workspace(workspace_file_name: str) -> bool:
+    """
+    Checks if a file exists in the workspace
+    """
+    full_file_name = get_full_file_name(workspace_file_name)
+
+    return os.path.exists(full_file_name) and os.path.isfile(full_file_name)
