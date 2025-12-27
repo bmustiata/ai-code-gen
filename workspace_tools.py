@@ -3,7 +3,9 @@ from typing import Optional, Dict
 
 from agents import function_tool
 
+import codegen
 from ge_agent import GeAgent
+from structs import FileInfo
 
 workspace_folder: str = "/tmp/gox/"
 
@@ -37,14 +39,12 @@ api_cache: Dict[str, str] = dict()
 async def read_api(file_name: str) -> str:
     """
     Read the API definitions from the given filename.
-    :param file_name:
-    :return:
     """
     global api_cache
 
     print(f"  ➡️ reading API for {file_name}")
-
     full_file_name = get_full_file_name(file_name)
+
     if full_file_name in api_cache:
         return api_cache[full_file_name]
 

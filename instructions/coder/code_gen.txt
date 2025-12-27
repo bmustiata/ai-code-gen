@@ -20,6 +20,9 @@ If this is some programming task:
 * If there's something not obvious document using comments why a certain decision was made.
 * String or numeric constants that repeat have them moved in a shared constant.
 * Make sure used functions returns matches the type where it's used.
+* Make sure the output is well-defined and matches what the user requested.
+* Ensure the things mentioned in the SPEC.md and in the package-notes.txt if it exists
+  are fully implemented for this file.
 
 It this is some documentation/metadata writing task just be concise.
 

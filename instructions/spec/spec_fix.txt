@@ -28,8 +28,9 @@ java implementation, without external dependencies. The build system is Maven.
 ## File List
 
 * /pom.xml - Maven build definition file
-* /src/main/java/com/wiki2md/ArgParseUtil.java - Parser of the command line arguments.
+* /src/main/java/com/wiki2md/ArgParseUtil.java - Parser of the command line arguments
 * /src/main/java/com/wiki2md/Main.java - Implementation of the Wikipedia2Markdown program
+* /src/main/java/com/wiki2md/package-notes.txt - Common things used in the same module
 
 ## Documentation
 
@@ -46,15 +47,31 @@ Header parsing supports both h1/h2/h3, and =, ==, === formats.
 Make sure there's no ambiguities in the user requirements. When in doubt, ask the user what
 exactly it wants. When you're sure call the tool to write the `SPEC.md`. Try to always be concise.
 
-If the program contains information that needs to be shared across multiple files of the
-implementation (grpc definitions, DB schema definitions, shared data structures, header files, etc),
-they should be clearly and concisely documented in the specification.
+If the program contains information that needs to be shared across multiple files across different
+modules of the implementation (grpc definitions, DB schema definitions, shared data structures,
+header files, etc), they should be clearly and concisely documented in the specification.
 
-Only generate the `SPEC.md` with the short description, file list, and functional/structural documentation.
-There will be specialized people writing the actual files content.
+Things that are shared across a single package should be thoroughly documented in the
+`package-notes.txt` file saved in the same package.
+
+Only generate the `SPEC.md` with the short description, file list, and functional/structural
+documentation. There will be specialized people writing the actual files content.
 
 Here's the requirements:
 
 ------------------------------------------------- REQUIREMENTS START
 {requirements}
 ------------------------------------------------- REQUIREMENTS END
+
+Note that you already created the following SPEC file before:
+------------------------------------------------- SPEC START
+{spec}
+------------------------------------------------- SPEC END
+
+But this file was rejected with the following reason:
+
+------------------------------------------------- REJECTION REASON START
+{rejection_reason}
+------------------------------------------------- REJECTION REASON END
+
+Check the reason and fix the spec.

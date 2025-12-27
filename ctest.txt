@@ -1,15 +1,15 @@
 Create a FastAPI Python REST endpoint for a document store that's stored in sqlite.
 Make a small frontend for it using Vue3 + Vite.
 
-1. Create the DB schema:
+1. Create the DB schema. It should have three tables::
    - collection - contains a set of documents: has an id, title (max 256 chars), and description (max 2048 chars).
-   - document - is an actual document from the collection: has a collection_id, id, title (max 256 chars), description (max 2048 chars)
-   - document_part - is a section from the document: has a document_id, id, parent_id (if this is a child of another document part, can be the root one), parent_order, title, description (max 2048 chars), content (clob)
+   - document - is an actual document from the collection: has a collection_id, id, title (max 256 chars), description (max 2048 chars), publishing date (timestamp including the day + hour)
+   - document_part - is a section from the document: has a document_id, id, parent_id (if this document part is a child of another document part, null if it's the root one), parent_order, title (max 256 chars), description (max 2048 chars), content (clob)
 2. Create the REST operations, for all three tables:
    a. collection,
    b. documents and
    c. document_parts.
-   Split them in different files.
+   Split them in different files. Don't use any DB framework, just use direct SQL statements against sqlite.
 3. Create a Vue3 frontend that allows doing CRUD operations against the collection, documents and document_parts.
 
 Structure in the following subfolders:

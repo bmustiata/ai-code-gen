@@ -1,5 +1,26 @@
-Create an utility program in pure C that can list folders. The program should
-be able to list folders first, and files after.
+Create a utility program in pure C that can list folders.
+
+The program should list folders first, and files after. The output format should be for simple listing:
+
+```
+folderA
+folderB
+folderC
+file1
+file2
+file3
+```
+
+For extendend (`-l`) listing:
+
+```
+d folderA   -
+d folderB   -
+d folderC   -
+f file1     32
+f file2     124
+f file3     0
+```
 
 Program Flags:
 * `-l` flag, that when enabled it would make the program list
