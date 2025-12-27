@@ -38,7 +38,7 @@ api_cache: Dict[str, str] = dict()
 @function_tool
 async def read_api(file_name: str) -> str:
     """
-    Read the API definitions from the given filename.
+    Read the API declarations (classes, functions, structs, etc) from the given filename.
     """
     global api_cache
 

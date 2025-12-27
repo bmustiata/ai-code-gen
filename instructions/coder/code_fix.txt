@@ -31,3 +31,17 @@ IMPORTANT:
 1. You must use the `read_api` tool if you use functions or classes from another file.
 2. You must write the file you generate using the `write_file` tool. After you wrote the file your
    task is done. Don't do anything else.
+
+Note that you already created the {file_name} before with the following content:
+
+------------------------------------------------- CODE START
+{file_content}
+------------------------------------------------- CODE END
+
+But this file was rejected with the following reason:
+
+------------------------------------------------- REJECTION REASON START
+{rejection_reason}
+------------------------------------------------- REJECTION REASON END
+
+Check the reason and fix the implementation.

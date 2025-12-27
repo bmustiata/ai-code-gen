@@ -3,7 +3,7 @@ import asyncio
 import click
 
 import workspace_tools
-from codegen import generate_file
+from codegen import generate_file, check_generated_file, fix_failed_code
 from ge_agent import GeAgent
 from structs import FileResult, SpecCheckResult, FileList
 from workspace_tools import read_file_impl, write_file_impl
@@ -52,6 +52,18 @@ async def main(user_spec: str, workspace: str) -> None:
     for file in file_list.files:
         print(f"⚙️ generating {file.filename} ... ")
         await generate_file(file)
+
+    for file in file_list.files:
+        print(f"⚙️ re-checking the code for {file.filename} ... ")
+        check = await check_generated_file(file)
+
+        if check.valid:
+            continue
+
+        print(f"  ❌ code was not valid:\n{check.reason}")
+
+        print(f"⚙️ fixing the code for {file.filename} ... ")
+        await fix_failed_code(file, check)
 
 
 def read_multiline_message(prompt: str) -> str:

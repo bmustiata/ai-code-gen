@@ -1,9 +1,9 @@
+import structs
 import workspace_tools
 from ge_agent import GeAgent
-from structs import FileInfo
 
 
-async def generate_file(file: FileInfo) -> str:
+async def generate_file(file: structs.FileInfo) -> str:
     """
     Meat and butter of the generation.
     :param file:
@@ -23,3 +23,51 @@ async def generate_file(file: FileInfo) -> str:
 
     await coder.run(f"Write the {file.filename}")
     return workspace_tools.read_file_impl(file.filename)
+
+
+async def check_generated_file(file: structs.FileInfo) -> structs.SpecCheckResult:
+    coder = GeAgent("instructions/coder/code_check.txt",
+                    data={
+                        "file_name": file.filename,
+                        "file_description": file.description,
+                        "spec": workspace_tools.read_file_impl("/SPEC.md"),
+                        "file_content": workspace_tools.read_file_impl(file.filename),
+                    },
+                    tools=[
+                        workspace_tools.read_api,
+                    ],
+                    )
+
+    result = await coder.run(f"Check the {file.filename}")
+
+    if "INVALID" in result:
+        reason = result.split("INVALID")[1]
+
+        return structs.SpecCheckResult(
+            valid=False,
+            reason=reason
+        )
+
+    if "VALID" in result:
+        return structs.SpecCheckResult(valid=True, reason="")
+
+    print(f"WARNING: unable to figure out if the result is VALID or INVALID: {result}.")
+    return structs.SpecCheckResult(valid=True, reason="")
+
+
+async def fix_failed_code(file: structs.FileInfo, check: structs.SpecCheckResult) -> None:
+    coder = GeAgent("instructions/coder/code_fix.txt",
+                    data={
+                        "file_name": file.filename,
+                        "file_description": file.description,
+                        "spec": workspace_tools.read_file_impl("/SPEC.md"),
+                        "file_content": workspace_tools.read_file_impl(file.filename),
+                        "rejection_reason": check.reason,
+                    },
+                    tools=[
+                        workspace_tools.write_file,
+                        workspace_tools.read_api,
+                    ],
+                    )
+
+    await coder.run(f"Write the {file.filename}")
