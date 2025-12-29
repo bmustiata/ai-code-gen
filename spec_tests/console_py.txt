@@ -1,0 +1,57 @@
+Create a terminal python library that allows reading user inputs.
+
+There's three types of inputs:
+1. single line input -> returned as a normal str after <Enter>
+2. multi-line input -> also returned as a normal str after a single <Tab> was entered on a line.
+3. multiple options input -> returned as a str as well
+
+The API should be consistent:
+1. read_single(prompt: str, color: str = None, bgcolor: str = None, bold: bool = False, italic: bool = False) -> str
+2. read_multi(prompt: str, color: str = None, bgcolor: str = None, bold: bool = False, italic: bool = False) -> str
+3. read_options(prompt: str, title: str, options: list[str], color: str = None, bgcolor: str = None, bold: bool = False, italic: bool = False) -> str
+
+The prompt, color, bgcolor, bold and italic, applies to the rendering of the input prompt only:
+
+```python
+a = read_single("USER", color="white", bgcolor="green")
+```
+
+Should output:
+
+```
+USER> _
+```
+
+Where `USER>` is actually on a green background written with white text.
+In the case of an options read, the options should be displayed first. For example:
+
+```python
+a = read_options("SYSTEM", title="Restart System?", options=[
+  "Now",
+  "In 60 seconds",
+  "Cancel",
+  ], bgcolor="red", color="white", bold=True)
+```
+
+Should render:
+
+```
+Restart System?
+1. Now
+2. In 60 seconds
+3. Cancel
+
+SYSTEM> _
+```
+
+Here's the rendering details for read_options since it contains more than just the prompt:
+- `Restart System?` should be bold since it's the title. This is regardless of the prompt settings.
+- All the options texts should be written as normal text. No background color, no effects.
+- `SYSTEM>` should have the bold/italic/color/bgcolor user settings applied.
+
+Now, the user can either input `1`, or `2`, then the full option text should be returned. Otherwise, return the text
+of whatever the user wrote.
+
+Don't use any external library when implementing this.
+
+Write the module as a single monolithic `readinput.py` python file.

@@ -9,7 +9,7 @@ async def generate_file(file: structs.FileInfo) -> str:
     :param file:
     :return:
     """
-    coder = GeAgent("instructions/coder/code_gen.txt",
+    coder = GeAgent(get_coder_template(file, "code_gen.txt"),
                     data={
                         "file_name": file.filename,
                         "file_description": file.description,
@@ -26,7 +26,7 @@ async def generate_file(file: structs.FileInfo) -> str:
 
 
 async def check_generated_file(file: structs.FileInfo) -> structs.SpecCheckResult:
-    coder = GeAgent("instructions/coder/code_check.txt",
+    coder = GeAgent(get_coder_template(file, "code_check.txt"),
                     data={
                         "file_name": file.filename,
                         "file_description": file.description,
@@ -60,7 +60,7 @@ async def check_generated_file(file: structs.FileInfo) -> structs.SpecCheckResul
 
 
 async def fix_failed_code(file: structs.FileInfo, check: structs.SpecCheckResult) -> None:
-    coder = GeAgent("instructions/coder/code_fix.txt",
+    coder = GeAgent(get_coder_template(file, "code_fix.txt"),
                     data={
                         "file_name": file.filename,
                         "file_description": file.description,
@@ -75,3 +75,10 @@ async def fix_failed_code(file: structs.FileInfo, check: structs.SpecCheckResult
                     )
 
     await coder.run(f"Write the {file.filename}")
+
+
+def get_coder_template(file: structs.FileInfo, name: str) -> str:
+    if file.filename.endswith('.py'):
+        return f"instructions/coder/py/{name}"
+
+    return f"instructions/coder/py/{name}"

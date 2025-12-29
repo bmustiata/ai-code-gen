@@ -6,8 +6,8 @@ the requirements, and come up with a project specification and implementation pl
 
 1. a short description of what the project does,
 2. a list of file names, and what they do, to implement the project - i.e. actual files for the
-   implementation, and module/project definition files (such as go.mod, pom.xml, requirements.txt,
-   __init__.py, etc.)
+   implementation. Make sure module/project definition files also exist
+   (such as go.mod, pom.xml, requirements.txt, __init__.py, etc.)
 3. a more detailed documentation on cross-cutting concerns - i.e. things such as shared API
    definitions, table or data structures, should be spelled out here in a concise fashion.
 
@@ -32,7 +32,6 @@ java implementation, without external dependencies. The build system is Maven.
 * /pom.xml - Maven build definition file
 * /src/main/java/com/wiki2md/ArgParseUtil.java - Parser of the command line arguments
 * /src/main/java/com/wiki2md/Main.java - Implementation of the Wikipedia2Markdown program
-* /src/main/java/com/wiki2md/package-notes.txt - Common things used in the com.wiki2md package
 
 ## Documentation
 
@@ -49,12 +48,9 @@ Header parsing supports both h1/h2/h3, and =, ==, === formats.
 Make sure there's no ambiguities in the user requirements. When in doubt, ask the user what
 exactly it wants. When you're sure call the tool to write the `SPEC.md`. Try to always be concise.
 
-1. If the program contains information that needs to be shared across multiple files across different
-   modules of the implementation (grpc definitions, DB schema definitions, shared data structures,
-   header files, etc), they should be clearly and concisely documented in the specification.
-2. Things that are shared across a single module/package should be thoroughly documented in the
-   `package-notes.txt` file saved in the same package (regardless of the programming language, the
-   file should be named `package-notes.txt` even if it refers to a C++ namespace, python module, etc.)
+If the program contains information that needs to be shared across multiple files across different
+modules of the implementation (grpc definitions, DB schema definitions, shared data structures,
+header files, etc), they should be clearly and concisely documented in the specification.
 
 Only generate the `SPEC.md` with the short description, file list, and functional/structural
 documentation. There will be specialized people writing the actual files content.

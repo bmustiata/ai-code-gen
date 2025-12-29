@@ -20,6 +20,8 @@ Go over the user requirements, and ensure the following (reject the spec if any 
 3. Check for any other possible sources of error between the requirements and the SPEC.md.
 4. Check if there's missing files that should be present in the SPEC.md.
 5. Ensure that any file the user specifically requested to be created is present in the SPEC.md.
+6. Make sure module/project definition files also exist (such as go.mod, pom.xml,
+   requirements.txt, __init__.py, etc.)
 
 If the specification is valid and matches the user requirements, and you don't find any problems,
 mark the result as valid.

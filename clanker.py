@@ -2,6 +2,7 @@ import asyncio
 
 import click
 
+import readinput
 import workspace_tools
 from codegen import generate_file, check_generated_file, fix_failed_code
 from ge_agent import GeAgent
@@ -26,9 +27,8 @@ async def main(user_spec: str, workspace: str) -> None:
         with open(user_spec, "rt", encoding="utf-8") as f:
             user_input = f.read()
     else:
-        user_input = read_multiline_message("> ")
+        user_input = readinput.read_multi("SPEC", bgcolor="green", bold=True)
 
-    #
     print("⚙️ designing a spec ... ")
     spec_result = await create_specification(user_input)
     spec_result = read_file_impl("/SPEC.md")
@@ -70,19 +70,6 @@ async def main(user_spec: str, workspace: str) -> None:
         await fix_failed_code(file, check)
 
 
-def read_multiline_message(prompt: str) -> str:
-    print(prompt, end="")
-
-    message = ""
-    last_message = input()
-
-    while last_message != '\t':  # a single tab marks the end of input
-        message += last_message + "\n"
-        last_message = input()
-
-    return message
-
-
 async def create_specification(user_input: str) -> str:
     specgen = GeAgent("instructions/spec/spec_gen.txt",
                       output_type=FileResult,
@@ -108,7 +95,7 @@ async def check_generated_specification(user_input: str, spec: str) -> SpecCheck
 
 
 async def fix_failed_specification(user_input: str, spec_result: str, check_spec: SpecCheckResult) -> str:
-    specgen = GeAgent("instructions/spec/spec_gen.txt",
+    specgen = GeAgent("instructions/spec/spec_fix.txt",
                       output_type=FileResult,
                       data={
                           "requirements": user_input,

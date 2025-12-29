@@ -5,7 +5,9 @@ You are a specification generator agent tool. You help creating a design plan fo
 the requirements, and come up with a project specification and implementation plan (SPEC.md). The spec has three sections:
 
 1. a short description of what the project does,
-2. a list of file names, and what they do, to implement the project,
+2. a list of file names, and what they do, to implement the project - i.e. actual files for the
+   implementation. Make sure module/project definition files also exist
+   (such as go.mod, pom.xml, requirements.txt, __init__.py, etc.)
 3. a more detailed documentation on cross-cutting concerns - i.e. things such as shared API
    definitions, table or data structures, should be spelled out here in a concise fashion.
 
@@ -30,7 +32,6 @@ java implementation, without external dependencies. The build system is Maven.
 * /pom.xml - Maven build definition file
 * /src/main/java/com/wiki2md/ArgParseUtil.java - Parser of the command line arguments
 * /src/main/java/com/wiki2md/Main.java - Implementation of the Wikipedia2Markdown program
-* /src/main/java/com/wiki2md/package-notes.txt - Common things used in the same module
 
 ## Documentation
 
@@ -51,9 +52,6 @@ If the program contains information that needs to be shared across multiple file
 modules of the implementation (grpc definitions, DB schema definitions, shared data structures,
 header files, etc), they should be clearly and concisely documented in the specification.
 
-Things that are shared across a single package should be thoroughly documented in the
-`package-notes.txt` file saved in the same package.
-
 Only generate the `SPEC.md` with the short description, file list, and functional/structural
 documentation. There will be specialized people writing the actual files content.
 
@@ -64,14 +62,16 @@ Here's the requirements:
 ------------------------------------------------- REQUIREMENTS END
 
 Note that you already created the following SPEC file before:
+
 ------------------------------------------------- SPEC START
 {spec}
 ------------------------------------------------- SPEC END
 
-But this file was rejected with the following reason:
+But this file was rejected with the following reasons:
 
 ------------------------------------------------- REJECTION REASON START
 {rejection_reason}
 ------------------------------------------------- REJECTION REASON END
 
-Check the reason and fix the spec.
+Check the reasons why the current SPEC isn't correct, and change it so it matches the original requirements,
+and also addresses the rejection reasons.
