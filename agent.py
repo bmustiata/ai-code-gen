@@ -22,12 +22,20 @@ async def agent_mode(workspace: str) -> None:
     workspace_tools.workspace_folder = workspace
     session = InMemorySession("wut")
 
-    while True:
-        print("AGENT> ", end="", flush=True)
-        user_input = sys.stdin.readline().strip()
+    try:
+        while True:
+            print("AGENT> ", end="", flush=True)
+            user_input = sys.stdin.readline().strip()
 
-        print("⚙️ running custom query ... ")
-        await run_agent(session, user_input)
+            # Check if user wants to quit
+            if user_input.lower() == "quit":
+                exit_program()
+
+            print("⚙️ running custom query ... ")
+            await run_agent(session, user_input)
+    except KeyboardInterrupt:
+        # Handle Ctrl+C gracefully
+        exit_program()
 
 
 async def run_agent(session, user_input: str) -> str:
@@ -51,6 +59,12 @@ async def run_agent(session, user_input: str) -> str:
     return result
 
 
+def exit_program() -> None:
+    """Print goodbye message and exit the program."""
+    print("\n👋 Goodbye!")
+    sys.exit(0)
+
+
+
 if __name__ == "__main__":
     event_loop_main()
-
