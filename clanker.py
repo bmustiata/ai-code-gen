@@ -3,11 +3,11 @@ import asyncio
 import click
 
 import readinput
-import workspace_tools
+from tools import workspace_tools
 from codegen import generate_file, check_generated_file, fix_failed_code
 from ge_agent import GeAgent
 from structs import FileResult, SpecCheckResult, FileList
-from workspace_tools import read_file_impl, write_file_impl
+from tools.workspace_tools import read_file_impl, write_file_impl
 
 
 @click.command()
@@ -17,20 +17,20 @@ from workspace_tools import read_file_impl, write_file_impl
               help="Workspace folder where to create the files.",
               default="workspace")
 def event_loop_main(user_spec: str, workspace: str) -> None:
-   asyncio.run(main(user_spec, workspace))
+   asyncio.run(spec_mode(user_spec, workspace))
 
 
-async def main(user_spec: str, workspace: str) -> None:
+async def spec_mode(user_spec: str, workspace: str) -> None:
     workspace_tools.workspace_folder = workspace
 
     if user_spec:
         with open(user_spec, "rt", encoding="utf-8") as f:
             user_input = f.read()
     else:
-        user_input = readinput.read_multi("SPEC", bgcolor="green", bold=True)
+        user_input = readinput.read_multi(" SPEC", bgcolor="green", bold=True)
 
     print("⚙️ designing a spec ... ")
-    spec_result = await create_specification(user_input)
+    #spec_result = await create_specification(user_input)
     spec_result = read_file_impl("/SPEC.md")
 
     while True:

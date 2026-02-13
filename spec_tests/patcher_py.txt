@@ -1,0 +1,20 @@
+Create a python program that can apply patch files ignoring patch line endings differences.
+
+The input patch files are in the unified diff format. The program should do the
+following for each file it patches:
+
+1. Detect the line endings of the patched file (can be either DOS or UNIX)
+2. Iterate over files and apply each hunk for that file from the patch.
+   - Don't assume the hunk is still at the exact same location. If it's not at the exact same location,
+   start searching one line below, then one line above, then two lines below, and two lines above, etc.
+   until 200 lines trying to find the offset of the patch. If they're applied with an offset this should be
+   explicitly logged to the user.
+   - The line endings for inserted lines in the patch file are ignored, instead the detected line
+   ending will be appended, replacing whatever was in the diff for the line. Removed lines, the same, are
+   still removed even if the line ending is mismatching between the diff and the file patched.
+
+Everything else works like a normal patch run: rejects hunks are saved into the corresponding `.rej` file, etc.
+
+The python program shouldn't use any external dependencies, only python built-ins.
+
+The supported patch parameters are `-p<number>` with the same semantic as the regular patch, and the patch file name.

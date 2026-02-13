@@ -1,8 +1,11 @@
 import re
-from typing import List, Any, Dict, Optional, Tuple
+from typing import List, Any, Dict, Optional, Tuple, AsyncIterable
 
-from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings
+from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings, \
+    RawResponsesStreamEvent
 from openai import AsyncOpenAI
+from openai.types.responses import ResponseOutputItemAddedEvent, ResponseFunctionToolCall, ResponseOutputItemDoneEvent, \
+    ResponseReasoningItem, ResponseTextDeltaEvent
 
 local_client = AsyncOpenAI(
     base_url="http://gmktek:11434/v1/",
@@ -73,6 +76,41 @@ class GeAgent:
             max_turns=30,  # how many tools to call
         )
         return result.final_output
+
+    async def async_run(self, user_input: str) -> AsyncIterable[str]:
+        result = Runner.run_streamed(
+                self.agent,
+                input=user_input,
+                max_turns=30)
+
+        async for event in result.stream_events():
+            if isinstance(event, RawResponsesStreamEvent) and \
+                    isinstance(event.data, ResponseOutputItemAddedEvent) and \
+                    isinstance(event.data.item, ResponseFunctionToolCall):
+                print(f"--> tool: {event.data.item.name}")
+                continue
+
+            if isinstance(event, RawResponsesStreamEvent) and \
+                    isinstance(event.data, ResponseOutputItemDoneEvent) and \
+                    isinstance(event.data.item, ResponseFunctionToolCall):
+                print(f"<-- tool: {event.data.item.name}")
+                continue
+
+            if isinstance(event, RawResponsesStreamEvent) and \
+                    isinstance(event.data, ResponseOutputItemAddedEvent) and \
+                    isinstance(event.data.item, ResponseReasoningItem):
+                print(f"--> thinking...")
+                continue
+
+            if isinstance(event, RawResponsesStreamEvent) and \
+                    isinstance(event.data, ResponseOutputItemDoneEvent) and \
+                    isinstance(event.data.item, ResponseReasoningItem):
+                print(f"<-- thinking")
+                continue
+
+            if isinstance(event, RawResponsesStreamEvent) and \
+                    isinstance(event.data, ResponseTextDeltaEvent):
+                yield event.data.delta
 
 
 def extract_metadata(agent_lines: List[str]) -> Tuple[Dict[str, str], List[str]]:

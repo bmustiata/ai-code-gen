@@ -1,5 +1,5 @@
 import structs
-import workspace_tools
+from tools import workspace_tools
 from ge_agent import GeAgent
 
 

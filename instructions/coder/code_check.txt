@@ -17,6 +17,7 @@ Check at least the following:
 1. Is the code written implementing all the required items from the spec?
 2. Is the code clean and legible?
 3. Is the code using APIs that actually exists in the other files?
+4. Are things just mocked or have naive implementations, and this was not explicitly requested?
 
 Don't report issues unless you're 100% sure they're issues.
 

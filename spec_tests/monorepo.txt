@@ -1,0 +1,94 @@
+Create a python program named `git_monorepo` that can manage a monorepo made
+out of multiple git repos that are checked out and managed somewhere in the
+subtree of the current monorepo.
+
+git_monorepo is not a monorepo itself, is just a program that manages a monorepo
+project.
+
+## Monorepo Configuration
+
+Such a project would have two files that would tell `git_monorepo` about the
+monorepo project:
+
+1. `monorepo.yml` - contains a mapping of folders, with what git repos they
+                    should contain in that folder. Here's an example:
+
+```yml
+mappings:
+  adhesive:
+    adhesive: git@github.com:germaniumhq/adhesive.git
+    yamldict: git@github.com:bmustiata/yamldict.git
+  build: git@github.com:germaniumhq/build-please.git
+  oaas:
+    registry-api: git@github.com:germaniumhq/oaas-registry-api.git
+    registry: git@github.com:germaniumhq/oaas-registry.git
+```
+
+This would mean in the current folder we would have:
+
+adhesive/: parent folder
+  adhesive/: linked to git@github.com:germaniumhq/adhesive.git
+  yamldict/: linked to git@github.com:bmustiata/yamldict.git
+build: linked to git@github.com:germaniumhq/build-please.git
+oaas/: parent folder
+    registry-api/: linked to git@github.com:germaniumhq/oaas-registry-api.git
+    registry/: linked to git@github.com:germaniumhq/oaas-registry.git
+
+2. `monorepo.sync` - a yaml file where the `git_monorepo` keeps the current state
+                     of the currently checked-out version for each individual
+                     git repo included in the `monorepo.yml`
+
+A cache of the used repos is in a `.gitmono` folder where each individual git
+repo that `monorepo.yml` makes reference to is locally cached.
+
+## Commands
+
+The program offers the following commands:
+
+init - creates an empty `monorepo.yml` file in the current folder, with
+       a single sample `mappings:` entry offered as sample:
+       `adhesive: git@github.com:germaniumhq/adhesive.git`.
+pull - pulls all folders from the `monorepo.yml` (if no parameters), or
+       individual project folders. For example: `git monorepo pull adhesive/adhesive` would
+       use the info from the `monorepo_yaml['mappings']['adhesive']['adhesive']` to see the
+       remote repo. If a folder isn't yet cloned, it gets cloned. `monorepo.sync` is of
+       course updated to match.
+push - pushes all the changes into the corresponding repos. This means each
+       commit that happened on this monorepo will get recreated for the impacted repos
+       for the current branch.
+       So if there's 3 commits in the `adhesive/adhesive` folder, three commits,
+       each with the individual change would be created on the corresponding git repo
+       defined in the `monorepo.yml` (in the example above it would be git@github.com:germaniumhq/adhesive.git).
+       If a folder for a repo doesn't have changes, of course it won't create empty commits
+       for that repo. `monorepo.sync` is updated to reflect the new commit.
+sync - synchronizes all the repos in the `monorepo.yml` with any eventual upstream commits
+       that happened in each of the remote repos. Unlike pull this doesn't attempt to recreate the
+       history, it simply gets _all_ the changes that were upstream for the current branch, updates
+       the `monorepo.sync` with the correct hash for that repo and creates a single commit for the local
+       git monorepo.
+move - moves a folder from a place to another, and updates the `monorepo.yml`
+       and the `monorepo.sync` with the new information.
+merge - same like push, it will create a merge across all the repos that are affected by the change
+       between the current branch and the referred branch.
+       So for example if I'm on the `master` branch, and I do a `git monorepo merge feature/abc`,
+       the following will happen:
+       1. for each of the internal git repos in the `monorepo.yml` a merge will be created for the
+          same branches
+       2. the `monorepo.sync` would be updated.
+       3. an actual merge would be performed to the other branch, our `monorepo.sync` wins in case of
+          conflict, since we just updated it.
+help - display information on how to use it.
+
+All `pull`, `push` and `sync` commands allow local folders that are mapped to repos in the `monorepo.yml`.
+
+Break each command into its own python file.
+
+## Branch Management
+
+For all the git monorepo commands the same branch name is used across all the repos, looking
+at the currently checked out branch name in the monorepo. This is especially true for when branches
+don't exist on the remote git repo. If that's the case and a push needs to create it, it should
+create the branch first, before creating the commits.
+
+Use the local cache of the repos from the `.gitmono` when implementing the commands, since it would
+otherwise be expensive to always fetch and synchronize hashes in the git graph.

@@ -1,0 +1,12 @@
+Create a chatbot mock application. The application should be divided into three projects:
+
+1. `chatbot-api`: An API layer, that stores the grpc definitions with the operations to create and end
+   a chat, and streaming for the chat messages from the server.
+2. `chatbot-web`: A WEB layer written in Vite with Vue3 + TypeScript. This would have a page for the current
+   conversation with an agent. The user can pick one of the agents from the combo
+   The UI is made with PatternFly for styling. The messages are to be rendered as markdown.
+3. `chatbot-rest`: A REST layer written in Python. This should just mock streaming messages from the
+   backend, using a small delay. The conversation management to create/list/delete them
+   should also be mocked and only be saved in-process.
+
+The communication between the WEB and REST layers should happen via grpc-web.

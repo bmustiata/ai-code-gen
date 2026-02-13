@@ -3,9 +3,7 @@ from typing import Optional, Dict
 
 from agents import function_tool
 
-import codegen
 from ge_agent import GeAgent
-from structs import FileInfo
 
 workspace_folder: str = "/tmp/gox/"
 
@@ -24,9 +22,39 @@ def write_file(file_name: str, content: str) -> str:
 
 
 @function_tool
+def list_files(path: str) -> list[str]:
+    """
+    Lists all the files in the given folder. Folders end with a `/` in the name.
+    Files do not end with a `/`.
+    :param path:
+    :return:
+    """
+    print(f"  ➡️ listing {path}")
+    full_path = get_full_file_name(path)
+
+    if not os.path.isdir(full_path):
+        return ["{path} does not exist or is not a directory!"]
+
+    result: list[str] = []
+
+    for f in os.listdir(full_path):
+        joined_path = os.path.join(full_path, f)
+
+        if os.path.isdir(joined_path):
+            print("is folder: " + full_path)
+            joined_path += "/"
+
+        result.append(os.path.join(path, f))
+
+    print(result)
+    return result
+
+
+@function_tool
 def read_file(file_name: str) -> str:
     """
-    Reads the content of the file.
+    Reads the full content of the file. Use only when needed, files can be large.
+    If all you need are API signatures, just use the `read_api` tool.
     :param file_name:
     :return:
     """
@@ -49,9 +77,9 @@ async def read_api(file_name: str) -> str:
         return api_cache[full_file_name]
 
     # Create an API extractor agent
-    api_extractor = GeAgent("instructions/api_extractor.txt",
-                           output_type=str,
-                           data={
+    api_extractor = GeAgent("../instructions/api_extractor.txt",
+                            output_type=str,
+                            data={
                                "file_name": file_name,
                                "file_content": read_file_impl(file_name)
                            })
@@ -81,7 +109,7 @@ def write_file_impl(file_name: str, content: str) -> str:
         print(f"unable to write {full_file_name}")
         print(e)
 
-    return f"{file_name} was written!"
+    return f"{file_name} WRITTEN successfully! DONE."
 
 
 def read_file_impl(file_name: str) -> str:
@@ -89,13 +117,13 @@ def read_file_impl(file_name: str) -> str:
         full_file_name = ensure_file_path(file_name)
 
         if not full_file_name:
-            print(f"unable to read file: {full_file_name}")
+            print(f"unable to read file: {full_file_name} - file dos not exist")
             return "FILE DOES NOT EXISTS"
 
         with open(full_file_name, "rt", encoding="utf-8") as f:
             return f.read()
     except Exception as e:
-        print(f"unable to read file: {file_name}")
+        print(f"unable to read file: {file_name} - exception")
         print(e)
         return "FILE DOES NOT EXISTS"
 
