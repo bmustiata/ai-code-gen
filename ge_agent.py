@@ -23,7 +23,8 @@ class GeAgent:
                  agent_file: str,
                  tools: List[Any]=[],
                  output_type: type[Any] | AgentOutputSchemaBase | None = None,
-                 data: Optional[Dict[str, str]] = None):
+                 data: Optional[Dict[str, str]] = None,
+                 session: Optional[any] = None):
         """
         This creates an agent definition from a file. The agent file is divided in two parts divided by at least
         one empty line:
@@ -51,6 +52,7 @@ class GeAgent:
 
         self.instructions = "\n".join(instruction_lines)
         self.tools = tools
+        self.session = session
 
         local_model = OpenAIChatCompletionsModel(
             model=self.model_name,
@@ -81,7 +83,9 @@ class GeAgent:
         result = Runner.run_streamed(
                 self.agent,
                 input=user_input,
-                max_turns=30)
+                max_turns=30,
+                session=self.session,
+        )
 
         async for event in result.stream_events():
             if isinstance(event, RawResponsesStreamEvent) and \
