@@ -7,8 +7,10 @@ from agent_output import AgentPrintout
 from ge_agent import GeAgent
 from memory_session import InMemorySession
 from tools import workspace_tools
-from tools.workspace_tools import write_file, list_files, read_file, read_api, patch_file, grep, git_grep
-from tools.user_tools import sleep
+from tools.git_grep_tool import git_grep
+from tools.grep_tool import grep
+from tools.time_tools import sleep
+from tools.workspace_tools import write_file, list_files, read_file, read_api, patch_file
 
 
 @click.command()
@@ -72,6 +74,9 @@ async def run_agent(session, user_input: str) -> str:
             sleep,
         ],
         session=session,
+        data={
+            "user_input": user_input,
+        }
     )
     result = ""
 

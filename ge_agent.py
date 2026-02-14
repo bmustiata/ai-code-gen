@@ -79,7 +79,7 @@ class GeAgent:
             tools=tools,
             model=local_model,
             output_type=output_type,
-            model_settings=ModelSettings(top_p=0.1, max_tokens=32768),
+            model_settings=ModelSettings(top_p=0.1, max_tokens=202752),
         )
 
     async def run(self, user_input: str) -> Any:
@@ -113,7 +113,7 @@ class GeAgent:
                     self.agent_output.set_status(f"")
                     self._last_status = None
 
-                self.agent_output.print(f"\n🔧 {event.data.item.name} ✔️")
+                self.agent_output.print(f"\n🔧 calling {event.data.item.name}")
                 self._last_printed = "tool"
 
                 continue
