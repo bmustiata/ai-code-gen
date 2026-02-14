@@ -232,7 +232,7 @@ class GrepResult(BaseModel):
     successful: bool
     error_message: Optional[str] = None
 
-
+@function_tool
 def grep(search_text: str, is_regex: bool = False) -> GrepResult:
     """
     Searches for text in files within the workspace directory.
@@ -316,6 +316,7 @@ def grep(search_text: str, is_regex: bool = False) -> GrepResult:
         )
 
 
+@function_tool
 def git_grep(search_text: str, is_regex: bool = False) -> GrepResult:
     """
     Searches for text in files using git grep (searches in git tracked files within workspace).
