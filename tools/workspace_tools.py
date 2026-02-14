@@ -12,28 +12,14 @@ workspace_folder: str = "/tmp/gox/"
 def write_file(file_name: str, content: str) -> str:
     """
     Writes the content into the file as UTF-8. Characters are written
-    as they are, no escaping is necessary.
+    as they are, no escaping is necessary. Use this ONLY if you want to
+    create a new file, otherwise use the `patch_file` tool.
 
     :param file_name:
     :param content:
     :return:
     """
     return write_file_impl(file_name, content)
-
-
-@function_tool
-def patch_file(file_name: str, patch: str) -> str:
-    """
-    Patches a file by applying the given patch string. The patch can be:
-    - A simple replacement: "old_string=new_string"
-    - A multi-line replacement with delimiters
-    - A more complex patch format
-
-    :param file_name: The name of the file to patch
-    :param patch: The patch string to apply
-    :return: Confirmation message
-    """
-    return patch_file_impl(file_name, patch)
 
 
 @function_tool
@@ -114,7 +100,7 @@ def patch_file(file_name: str, search_text: str, replace_text: str) -> str:
     :param file_name: The name of the file to patch
     :param search_text: The text to search for
     :param replace_text: The text to replace with
-    :return: Confirmation message
+    :return: confirmation or error message
     """
     global api_cache
 
