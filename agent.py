@@ -15,15 +15,32 @@ from tools.user_tools import sleep
 @click.option("--workspace", "-w",
               help="Workspace folder where to create the files.",
               default="workspace")
-def event_loop_main(workspace: str) -> None:
-   asyncio.run(agent_mode(workspace))
+@click.option("--user-prompt", "-u",
+              help="Default user prompt to start the conversation.",
+              default=None)
+def event_loop_main(workspace: str, user_prompt: str) -> None:
+   asyncio.run(agent_mode(workspace, user_prompt))
 
 
-async def agent_mode(workspace: str) -> None:
+async def agent_mode(workspace: str, user_prompt: str) -> None:
     workspace_tools.workspace_folder = workspace
     session = InMemorySession("wut")
 
     try:
+        # Use default user prompt if provided, otherwise read from stdin
+        if user_prompt:
+            user_input = user_prompt
+        else:
+            print("🗑️ AGENT> ", end="", flush=True)
+            user_input = sys.stdin.readline().strip()
+
+        # Check if user wants to quit
+        if user_input.lower() == "quit":
+            exit_program()
+
+        await run_agent(session, user_input)
+
+        # Continue reading from stdin for subsequent messages
         while True:
             print("🗑️ AGENT> ", end="", flush=True)
             user_input = sys.stdin.readline().strip()

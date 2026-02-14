@@ -40,8 +40,12 @@ class GeAgent:
         :param data:
         """
 
-        with open(agent_file, encoding="UTF-8") as f:
-            agent_file_content = f.read()
+        try:
+            with open(agent_file, encoding="UTF-8") as f:
+                agent_file_content = f.read()
+        except:
+            print(f"unable to open agent file: {agent_file}")
+            raise
 
         if data:
             agent_file_content = replace_values(agent_file_content, data)

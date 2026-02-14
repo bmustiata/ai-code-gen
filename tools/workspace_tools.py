@@ -1,5 +1,6 @@
 import os.path
 import subprocess
+import sys
 from typing import Optional, Dict, List
 
 from agents import function_tool
@@ -68,6 +69,8 @@ api_cache: Dict[str, str] = dict()
 async def read_api(file_name: str) -> str:
     """
     Read the API declarations (classes, functions, structs, etc) from the given filename.
+
+    :param file_name: The name of the file to read
     """
     global api_cache
 
@@ -252,6 +255,7 @@ def grep(search_text: str, is_regex: bool = False) -> GrepResult:
         # Run grep command
         result = subprocess.run(
             grep_args,
+            cwd=workspace_folder,
             capture_output=True,
             text=True,
             check=True
@@ -337,6 +341,7 @@ def grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
         # Run grep command
         result = subprocess.run(
             grep_args,
+            cwd=workspace_folder,
             capture_output=True,
             text=True,
             check=True
@@ -397,6 +402,7 @@ def git_grep(search_text: str, is_regex: bool = False) -> GrepResult:
         # Check if we're in a git repository
         subprocess.run(
             ["git", "rev-parse", "--git-dir"],
+            cwd=workspace_folder,
             capture_output=True,
             check=True
         )
@@ -417,11 +423,12 @@ def git_grep(search_text: str, is_regex: bool = False) -> GrepResult:
         # Run git grep command
         result = subprocess.run(
             git_grep_args,
+            cwd=workspace_folder,
             capture_output=True,
             text=True,
             check=True
         )
-        
+
         # Parse git grep output and convert absolute paths to relative paths
         lines = []
         for line in result.stdout.splitlines():
