@@ -106,6 +106,52 @@ async def read_api(file_name: str) -> str:
     return api_content
 
 
+@function_tool
+def patch_file(file_name: str, search_text: str, replace_text: str) -> str:
+    """
+    Patches a file by replacing the first occurrence of search_text with replace_text.
+
+    :param file_name: The name of the file to patch
+    :param search_text: The text to search for
+    :param replace_text: The text to replace with
+    :return: Confirmation message
+    """
+    global api_cache
+
+    full_file_name = ensure_file_path(file_name)
+
+    if not full_file_name:
+        return f"unable to patch {file_name} - file path not valid"
+
+    try:
+        # Read the current file content
+        with open(full_file_name, "rt", encoding="utf-8") as f:
+            content = f.read()
+
+        # Check if search_text is found
+        if search_text not in content:
+            return f"Searched text not found in {file_name}"
+
+        # Replace only the first occurrence
+        patched_content = content.replace(search_text, replace_text, 1)
+
+        # Update the cache if the file was in it
+        if full_file_name in api_cache:
+            del api_cache[full_file_name]
+
+        # Write the patched content back
+        with open(full_file_name, "wt", encoding="utf-8") as f:
+            f.write(patched_content)
+
+        print(f"  📝 {full_file_name} patched successfully")
+        return f"File {file_name} patched successfully"
+
+    except Exception as e:
+        print(f"unable to patch {full_file_name}")
+        print(e)
+        return f"unable to patch {file_name}"
+
+
 def write_file_impl(file_name: str, content: str) -> str:
     global api_cache
 
@@ -126,97 +172,6 @@ def write_file_impl(file_name: str, content: str) -> str:
         print(e)
 
     return f"{file_name} WRITTEN successfully! DONE."
-
-
-def patch_file_impl(file_name: str, patch: str) -> str:
-    """
-    Implements the patch_file functionality.
-    Supports multiple patch formats:
-    1. Simple replacement: "old_string=new_string"
-    2. Multi-line replacement with triple quotes
-    3. Complex patch patterns
-    """
-    global api_cache
-
-    full_file_name = ensure_file_path(file_name)
-
-    if not full_file_name:
-        return f"unable to patch {file_name} - file path not valid"
-
-    try:
-        # Read the current file content
-        with open(full_file_name, "rt", encoding="utf-8") as f:
-            content = f.read()
-
-        # Apply the patch
-        patched_content = apply_patch(content, patch)
-
-        # Update the cache if the file was in it
-        if full_file_name in api_cache:
-            del api_cache[full_file_name]
-
-        # Write the patched content back
-        with open(full_file_name, "wt", encoding="utf-8") as f:
-            f.write(patched_content)
-
-        print(f"  📝 {full_file_name} patched successfully")
-        return f"{file_name} PATCHED successfully! DONE."
-
-    except Exception as e:
-        print(f"unable to patch {full_file_name}")
-        print(e)
-        return f"unable to patch {file_name}"
-
-
-def apply_patch(content: str, patch: str) -> str:
-    """
-    Applies a patch to the content string.
-    Supports multiple patch formats:
-    1. Simple replacement: "old_string=new_string"
-    2. Multi-line replacement with triple quotes
-    3. Complex patch patterns
-    """
-    # Check for simple replacement format (old_string=new_string)
-    if "=" in patch and not patch.startswith('"""') and not patch.startswith("'''"):
-        parts = patch.split("=", 1)
-        if len(parts) == 2:
-            old_string = parts[0].strip()
-            new_string = parts[1].strip()
-            return content.replace(old_string, new_string)
-
-    # Check for multi-line replacement with triple quotes
-    if patch.startswith('"""') and patch.endswith('"""'):
-        # Extract the replacement content (everything between the quotes)
-        replacement = patch[3:-3].strip()
-        
-        # Try to find a matching section to replace
-        # Look for a section that starts with the replacement content
-        lines = content.split('\n')
-        replacement_lines = replacement.split('\n')
-        
-        # Find the start and end of the section to replace
-        start_idx = -1
-        end_idx = -1
-        
-        for i in range(len(lines) - len(replacement_lines) + 1):
-            match = True
-            for j in range(len(replacement_lines)):
-                if i + j >= len(lines) or lines[i + j] != replacement_lines[j]:
-                    match = False
-                    break
-            if match:
-                start_idx = i
-                end_idx = i + len(replacement_lines)
-                break
-        
-        if start_idx != -1:
-            # Replace the section
-            new_lines = lines[:start_idx] + [replacement] + lines[end_idx:]
-            return '\n'.join(new_lines)
-    
-    # If no specific format matched, return the original content
-    # (or you could raise an error or return a message)
-    return content
 
 
 def read_file_impl(file_name: str) -> str:

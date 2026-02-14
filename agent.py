@@ -7,7 +7,7 @@ from ge_agent import GeAgent
 from memory_session import InMemorySession
 from tools import workspace_tools
 from tools.user_tools import ask_the_user
-from tools.workspace_tools import write_file, list_files, read_file, read_api
+from tools.workspace_tools import write_file, list_files, read_file, read_api, patch_file
 
 
 @click.command()
@@ -46,6 +46,7 @@ async def run_agent(session, user_input: str) -> str:
             list_files,
             read_file,
             read_api,
+            patch_file,
             ask_the_user,
         ],
         session=session,
