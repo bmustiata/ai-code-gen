@@ -98,7 +98,7 @@ class GeAgent:
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemAddedEvent) and \
                     isinstance(event.data.item, ResponseFunctionToolCall):
-                self.agent_output.set_status(f"tool: {event.data.item.name}")
+                self.agent_output.set_status(f"🔧 {event.data.item.name}")
                 self._last_status = "tool"
                 continue
 
@@ -109,7 +109,7 @@ class GeAgent:
                     self.agent_output.set_status(f"")
                     self._last_status = None
 
-                self.agent_output.print(f"\ncalled tool {event.data.item.name}")
+                self.agent_output.print(f"\n🔧 {event.data.item.name} ✔️")
                 self._last_printed = "tool"
 
                 continue
@@ -117,7 +117,7 @@ class GeAgent:
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemAddedEvent) and \
                     isinstance(event.data.item, ResponseReasoningItem):
-                self.agent_output.set_status(f"thinking...")
+                self.agent_output.set_status(f"⚙️ thinking...")
                 self._last_status = "think"
 
                 continue

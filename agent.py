@@ -24,7 +24,7 @@ async def agent_mode(workspace: str) -> None:
 
     try:
         while True:
-            print("AGENT> ", end="", flush=True)
+            print("🗑️ AGENT> ", end="", flush=True)
             user_input = sys.stdin.readline().strip()
 
             # Check if user wants to quit
