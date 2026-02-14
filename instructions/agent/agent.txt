@@ -1,5 +1,5 @@
 title=Coder
-model=gpt-oss:20b
+model=glm-4.7-flash
 
 You are a coder agent. You need to perform the requested changes as clearly and performantly as possible.
 

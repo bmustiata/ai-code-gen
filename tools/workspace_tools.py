@@ -1,9 +1,11 @@
 import os.path
-from typing import Optional, Dict
+import subprocess
+from typing import Optional, Dict, List
 
 from agents import function_tool
 
 from ge_agent import GeAgent
+from pydantic import BaseModel
 
 workspace_folder: str = "/tmp/gox/"
 
@@ -215,3 +217,197 @@ def file_exists_in_workspace(workspace_file_name: str) -> bool:
     full_file_name = get_full_file_name(workspace_file_name)
 
     return os.path.exists(full_file_name) and os.path.isfile(full_file_name)
+
+
+class GrepLine(BaseModel):
+    """Represents a single line matched by grep"""
+    file_name: str
+    line: int
+    matched_line: str
+
+
+class GrepResult(BaseModel):
+    """Result of a grep operation"""
+    lines: List[GrepLine]
+    successful: bool
+    error_message: Optional[str] = None
+
+
+def grep(search_text: str, is_regex: bool = False) -> GrepResult:
+    """
+    Searches for text in files within the workspace directory.
+    
+    :param search_text: The text to search for
+    :param is_regex: Whether to treat search_text as a regular expression
+    :return: GrepResult containing matched lines or error information
+    """
+    try:
+        full_path = get_full_file_name(workspace_folder)
+        
+        if not os.path.isdir(full_path):
+            return GrepResult(
+                lines=[],
+                successful=False,
+                error_message=f"Workspace directory does not exist: {full_path}"
+            )
+        
+        # Build grep command
+        grep_args = ["grep"]
+        
+        if is_regex:
+            grep_args.append("-r")
+            grep_args.append("-E")
+        else:
+            grep_args.append("-r")
+            grep_args.append("-F")
+        
+        grep_args.append("-n")  # Show line numbers
+        grep_args.append("-H")  # Always print filenames
+        grep_args.append(search_text)
+        grep_args.append(full_path)
+        
+        # Run grep command
+        result = subprocess.run(
+            grep_args,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        # Parse grep output
+        lines = []
+        for line in result.stdout.splitlines():
+            # Grep output format: filename:line_number:matched_line
+            if ':' in line:
+                parts = line.split(':', 2)
+                if len(parts) >= 3:
+                    file_name = parts[0]
+                    line_num = int(parts[1])
+                    matched_line = parts[2]
+                    lines.append(GrepLine(
+                        file_name=file_name,
+                        line=line_num,
+                        matched_line=matched_line
+                    ))
+        
+        return GrepResult(
+            lines=lines,
+            successful=True
+        )
+        
+    except subprocess.CalledProcessError as e:
+        # grep returns non-zero when no matches are found
+        if e.returncode == 1 and not e.stdout:
+            return GrepResult(
+                lines=[],
+                successful=True,
+                error_message="No matches found"
+            )
+        return GrepResult(
+            lines=[],
+            successful=False,
+            error_message=f"Grep command failed: {e.stderr}"
+        )
+    except Exception as e:
+        return GrepResult(
+            lines=[],
+            successful=False,
+            error_message=f"Error during grep: {str(e)}"
+        )
+
+
+def git_grep(search_text: str, is_regex: bool = False) -> GrepResult:
+    """
+    Searches for text in files using git grep (searches in git tracked files within workspace).
+    
+    :param search_text: The text to search for
+    :param is_regex: Whether to treat search_text as a regular expression
+    :return: GrepResult containing matched lines or error information
+    """
+    try:
+        # Check if we're in a git repository
+        subprocess.run(
+            ["git", "rev-parse", "--git-dir"],
+            capture_output=True,
+            check=True
+        )
+        
+        # Build git grep command with workspace restriction
+        git_grep_args = ["git", "grep"]
+        
+        if is_regex:
+            git_grep_args.append("-E")
+        else:
+            git_grep_args.append("-F")
+        
+        git_grep_args.append("-n")  # Show line numbers
+        git_grep_args.append("-H")  # Always print filenames
+        git_grep_args.append(search_text)
+        git_grep_args.append(workspace_folder)  # Restrict to workspace folder
+        
+        # Run git grep command
+        result = subprocess.run(
+            git_grep_args,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        
+        # Parse git grep output and convert absolute paths to relative paths
+        lines = []
+        for line in result.stdout.splitlines():
+            # Git grep output format: filename:line_number:matched_line
+            if ':' in line:
+                parts = line.split(':', 2)
+                if len(parts) >= 3:
+                    file_name = parts[0]
+                    line_num = int(parts[1])
+                    matched_line = parts[2]
+                    
+                    # Convert absolute path to relative path to hide workspace location
+                    if file_name.startswith(workspace_folder):
+                        relative_path = file_name[len(workspace_folder):].lstrip('/')
+                        lines.append(GrepLine(
+                            file_name=relative_path,
+                            line=line_num,
+                            matched_line=matched_line
+                        ))
+                    else:
+                        # Keep as-is if it's not in workspace (shouldn't happen with restriction)
+                        lines.append(GrepLine(
+                            file_name=file_name,
+                            line=line_num,
+                            matched_line=matched_line
+                        ))
+        
+        return GrepResult(
+            lines=lines,
+            successful=True
+        )
+        
+    except subprocess.CalledProcessError as e:
+        # git grep returns non-zero when no matches are found
+        if e.returncode == 1 and not e.stdout:
+            return GrepResult(
+                lines=[],
+                successful=True,
+                error_message="No matches found in git tracked files"
+            )
+        return GrepResult(
+            lines=[],
+            successful=False,
+            error_message=f"Git grep command failed: {e.stderr}"
+        )
+    except subprocess.CalledProcessError as e:
+        # Not in a git repository
+        return GrepResult(
+            lines=[],
+            successful=False,
+            error_message="Not in a git repository"
+        )
+    except Exception as e:
+        return GrepResult(
+            lines=[],
+            successful=False,
+            error_message=f"Error during git grep: {str(e)}"
+        )
