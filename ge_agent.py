@@ -5,6 +5,7 @@ from openai import AsyncOpenAI
 from openai.types.responses import ResponseOutputItemAddedEvent, ResponseFunctionToolCall, ResponseOutputItemDoneEvent, \
     ResponseReasoningItem, ResponseTextDeltaEvent, ResponseReasoningTextDeltaEvent
 
+from agent_output import AgentPrintout
 from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings, \
     RawResponsesStreamEvent
 
@@ -22,6 +23,7 @@ class GeAgent:
     """
     def __init__(self,
                  agent_file: str,
+                 agent_output: AgentPrintout | None = None,
                  tools: List[Any]=[],
                  output_type: type[Any] | AgentOutputSchemaBase | None = None,
                  data: Optional[Dict[str, str]] = None,
@@ -54,6 +56,7 @@ class GeAgent:
         self.instructions = "\n".join(instruction_lines)
         self.tools = tools
         self.session = session
+        self.agent_output = agent_output
 
         local_model = OpenAIChatCompletionsModel(
             model=self.model_name,
@@ -92,30 +95,33 @@ class GeAgent:
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemAddedEvent) and \
                     isinstance(event.data.item, ResponseFunctionToolCall):
-                print(f"--> tool: {event.data.item.name}")
+                self.agent_output.set_status(f"tool: {event.data.item.name}")
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemDoneEvent) and \
                     isinstance(event.data.item, ResponseFunctionToolCall):
-                print(f"<-- tool: {event.data.item.name}")
+                self.agent_output.set_status(f"")
+                # print in agent log?
+                # print(f"<-- tool: {event.data.item.name}")
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemAddedEvent) and \
                     isinstance(event.data.item, ResponseReasoningItem):
-                print(f"--> thinking...")
+                self.agent_output.set_status(f"thinking...")
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemDoneEvent) and \
                     isinstance(event.data.item, ResponseReasoningItem):
-                print(f"<-- thinking")
+                self.agent_output.set_status(f"")
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseReasoningTextDeltaEvent):
-                print(f"\033[2m{event.data.delta}\033[0m", end="", flush=True)
+                # print as dimmed text
+                self.agent_output.print(event.data.delta, ansi_before="\033[2m", ansi_after="\033[0m")
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \

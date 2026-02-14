@@ -3,9 +3,9 @@ import subprocess
 from typing import Optional, Dict, List
 
 from agents import function_tool
+from pydantic import BaseModel
 
 from ge_agent import GeAgent
-from pydantic import BaseModel
 
 workspace_folder: str = "/tmp/gox/"
 
@@ -32,7 +32,6 @@ def list_files(path: str) -> list[str]:
     :param path:
     :return:
     """
-    print(f"  ➡️ listing {path}")
     full_path = get_full_file_name(path)
 
     if not os.path.isdir(full_path):
@@ -44,12 +43,10 @@ def list_files(path: str) -> list[str]:
         joined_path = os.path.join(full_path, f)
 
         if os.path.isdir(joined_path):
-            print("is folder: " + full_path)
             joined_path += "/"
 
         result.append(os.path.join(path, f))
 
-    print(result)
     return result
 
 
@@ -74,7 +71,6 @@ async def read_api(file_name: str) -> str:
     """
     global api_cache
 
-    print(f"  ➡️ reading API for {file_name}")
     full_file_name = get_full_file_name(file_name)
 
     if full_file_name in api_cache:
@@ -131,12 +127,9 @@ def patch_file(file_name: str, search_text: str, replace_text: str) -> str:
         with open(full_file_name, "wt", encoding="utf-8") as f:
             f.write(patched_content)
 
-        print(f"  📝 {full_file_name} patched successfully")
         return f"File {file_name} patched successfully"
 
     except Exception as e:
-        print(f"unable to patch {full_file_name}")
-        print(e)
         return f"unable to patch {file_name}"
 
 
@@ -154,10 +147,8 @@ def write_file_impl(file_name: str, content: str) -> str:
     try:
         with open(full_file_name, "wt", encoding="utf-8") as f:
             f.write(content)
-        print(f"  📄 {full_file_name} written")
     except Exception as e:
-        print(f"unable to write {full_file_name}")
-        print(e)
+        return f"Failed to write {file_name}: {e}"
 
     return f"{file_name} WRITTEN successfully! DONE."
 
@@ -167,15 +158,12 @@ def read_file_impl(file_name: str) -> str:
         full_file_name = ensure_file_path(file_name)
 
         if not full_file_name:
-            print(f"unable to read file: {full_file_name} - file dos not exist")
             return "FILE DOES NOT EXISTS"
 
         with open(full_file_name, "rt", encoding="utf-8") as f:
             return f.read()
     except Exception as e:
-        print(f"unable to read file: {file_name} - exception")
-        print(e)
-        return "FILE DOES NOT EXISTS"
+        return f"FAILED TO READ {file_name}: {e}"
 
 
 def ensure_file_path(workspace_file_name: str) -> Optional[str]:
@@ -183,19 +171,14 @@ def ensure_file_path(workspace_file_name: str) -> Optional[str]:
     Ensures all the folders to that file exist. Ensures also the
     folder is inside the workspace.
     """
-    try:
-        if workspace_file_name and workspace_file_name.startswith("/"):
-            workspace_file_name = "." + workspace_file_name
+    if workspace_file_name and workspace_file_name.startswith("/"):
+        workspace_file_name = "." + workspace_file_name
 
-        full_file_name = os.path.abspath(os.path.join(workspace_folder, workspace_file_name))
-        full_dir_name = os.path.dirname(full_file_name)
-        os.makedirs(full_dir_name, exist_ok=True)
+    full_file_name = os.path.abspath(os.path.join(workspace_folder, workspace_file_name))
+    full_dir_name = os.path.dirname(full_file_name)
+    os.makedirs(full_dir_name, exist_ok=True)
 
-        return full_file_name
-    except Exception as e:
-        print(f"unable to create file {workspace_file_name}")
-        print(e)
-        return None
+    return full_file_name
 
 
 def get_full_file_name(workspace_file_name: str) -> str:

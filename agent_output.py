@@ -11,7 +11,7 @@ class AgentPrintout:
     
     def set_status(self, status: str) -> None:
         """
-        Set the status line at the end of the current line.
+        Set the status line on the bottom of the terminal.
         
         Args:
             status: The status string to display
@@ -19,7 +19,7 @@ class AgentPrintout:
         self._status = status
         self._print_status()
 
-    def print(self, text: str) -> None:
+    def print(self, text: str, ansi_before: str = "", ansi_after: str = "") -> None:
         """
         Print text with special cursor behavior.
         
@@ -35,7 +35,9 @@ class AgentPrintout:
 
         # move Cursor to the right column
         for i in range(self.current_column):
-            print("\033[1C", end='', flush=True)
+            print("\033[1C", end='', flush=False)
+
+        print(ansi_before, end='', flush=False)
 
         for c in text:
             if c == "\n":
@@ -50,6 +52,8 @@ class AgentPrintout:
                 self.current_column = 0
 
             print(c, end='')
+
+        print(ansi_after, end='', flush=False)
 
         print()
         self._print_status()
