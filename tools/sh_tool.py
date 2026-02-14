@@ -14,10 +14,12 @@ class RunShResult(BaseModel):
     success: bool
 
 
-@function_tool
-def run_sh_command(command: str) -> RunShResult:
+def run_sh_command_impl(command: str) -> RunShResult:
     """
-    Run a shell command within the workspace directory.
+    Internal implementation of running a shell command within the workspace directory.
+    
+    This function contains the actual logic for executing shell commands and should be
+    tested directly. The public `run_sh_command` function is a delegate wrapper.
     
     :param command: The shell command to execute
     :return: RunShResult containing stdout, stderr, return_code, and success status
@@ -49,3 +51,14 @@ def run_sh_command(command: str) -> RunShResult:
             return_code=-1,
             success=False
         )
+
+
+@function_tool
+def run_sh_command(command: str) -> RunShResult:
+    """
+    Run a shell command within the workspace directory.
+    
+    :param command: The shell command to execute
+    :return: RunShResult containing stdout, stderr, return_code, and success status
+    """
+    return run_sh_command_impl(command)

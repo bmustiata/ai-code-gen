@@ -5,7 +5,7 @@ from agents import function_tool
 
 from ge_agent import GeAgent
 
-workspace_folder: str = "/tmp/gox/"
+workspace_folder: str = os.getcwd()
 
 
 @function_tool
