@@ -15,6 +15,19 @@ def git_grep(search_text: str, is_regex: bool = False) -> GrepResult:
     :param is_regex: Whether to treat search_text as a regular expression
     :return: GrepResult containing matched lines or error information
     """
+    return git_grep_impl(search_text, is_regex)
+
+
+def git_grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
+    """
+    Internal implementation of git grep - searches for text in git tracked files within workspace.
+
+    This function is used by the git_grep tool and can be tested independently.
+
+    :param search_text: The text to search for
+    :param is_regex: Whether to treat search_text as a regular expression
+    :return: GrepResult containing matched lines or error information
+    """
     try:
         # Check if we're in a git repository
         subprocess.run(
@@ -74,7 +87,7 @@ def git_grep(search_text: str, is_regex: bool = False) -> GrepResult:
 
         return GrepResult(
             lines=lines,
-            successful=True
+            success=True
         )
 
     except subprocess.CalledProcessError as e:
@@ -82,24 +95,24 @@ def git_grep(search_text: str, is_regex: bool = False) -> GrepResult:
         if e.returncode == 1 and not e.stdout:
             return GrepResult(
                 lines=[],
-                successful=True,
+                success=True,
                 error_message="No matches found in git tracked files"
             )
         return GrepResult(
             lines=[],
-            successful=False,
+            success=False,
             error_message=f"Git grep command failed: {e.stderr}"
         )
     except subprocess.CalledProcessError as e:
         # Not in a git repository
         return GrepResult(
             lines=[],
-            successful=False,
+            success=False,
             error_message="Not in a git repository"
         )
     except Exception as e:
         return GrepResult(
             lines=[],
-            successful=False,
+            success=False,
             error_message=f"Error during git grep: {str(e)}"
         )

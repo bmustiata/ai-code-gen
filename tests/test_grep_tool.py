@@ -3,7 +3,6 @@ Tests for the grep functionality.
 """
 import uuid
 
-import pytest
 from tools.grep_tool import grep_impl, GrepResult, GrepLine
 
 
