@@ -11,6 +11,7 @@ from tools.git_grep_tool import git_grep
 from tools.grep_tool import grep
 from tools.time_tools import sleep
 from tools.workspace_tools import write_file, list_files, read_file, read_api, patch_file
+from tools.sh_tool import run_sh_command
 
 
 @click.command()
@@ -64,14 +65,15 @@ async def run_agent(session, user_input: str) -> str:
         "instructions/agent/agent.txt",
         agent_output=agent_output,
         tools=[
-            write_file,
-            list_files,
-            read_file,
-            read_api,
-            patch_file,
-            grep,
             git_grep,
+            grep,
+            list_files,
+            patch_file,
+            read_api,
+            read_file,
+            run_sh_command,
             sleep,
+            write_file,
         ],
         session=session,
         data={
