@@ -18,7 +18,7 @@ class GrepLine(BaseModel):
 class GrepResult(BaseModel):
     """Result of a grep operation"""
     lines: List[GrepLine]
-    successful: bool
+    success: bool
     error_message: Optional[str] = None
 
 
@@ -38,7 +38,7 @@ def grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
         if not os.path.isdir(full_workspace_path):
             return GrepResult(
                 lines=[],
-                successful=False,
+                success=False,
                 error_message=f"Workspace directory does not exist: {full_workspace_path}"
             )
         
@@ -84,7 +84,7 @@ def grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
         
         return GrepResult(
             lines=lines,
-            successful=True
+            success=True
         )
         
     except subprocess.CalledProcessError as e:
@@ -92,18 +92,18 @@ def grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
         if e.returncode == 1 and not e.stdout:
             return GrepResult(
                 lines=[],
-                successful=True,
+                success=True,
                 error_message="No matches found"
             )
         return GrepResult(
             lines=[],
-            successful=False,
+            success=False,
             error_message=f"Grep command failed: {e.stderr}"
         )
     except Exception as e:
         return GrepResult(
             lines=[],
-            successful=False,
+            success=False,
             error_message=f"Error during grep: {str(e)}"
         )
 

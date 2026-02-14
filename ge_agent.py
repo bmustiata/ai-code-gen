@@ -86,7 +86,7 @@ class GeAgent:
         result = await Runner.run(
             self.agent,
             input=user_input,
-            max_turns=30,  # how many tools to call
+            max_turns=200,  # how many tools to call
         )
         return result.final_output
 
@@ -94,7 +94,7 @@ class GeAgent:
         result = Runner.run_streamed(
                 self.agent,
                 input=user_input,
-                max_turns=30,
+                max_turns=200,
                 session=self.session,
         )
 
