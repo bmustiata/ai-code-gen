@@ -1,11 +1,12 @@
 import re
 from typing import List, Any, Dict, Optional, Tuple, AsyncIterable
 
-from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings, \
-    RawResponsesStreamEvent
 from openai import AsyncOpenAI
 from openai.types.responses import ResponseOutputItemAddedEvent, ResponseFunctionToolCall, ResponseOutputItemDoneEvent, \
-    ResponseReasoningItem, ResponseTextDeltaEvent
+    ResponseReasoningItem, ResponseTextDeltaEvent, ResponseReasoningTextDeltaEvent
+
+from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings, \
+    RawResponsesStreamEvent
 
 local_client = AsyncOpenAI(
     base_url="http://gmktek:11434/v1/",
@@ -113,8 +114,16 @@ class GeAgent:
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
+                    isinstance(event.data, ResponseReasoningTextDeltaEvent):
+                print(f"\033[2m{event.data.delta}\033[0m", end="", flush=True)
+                continue
+
+            if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseTextDeltaEvent):
                 yield event.data.delta
+            else:
+                pass
+                # print(f"--> unexpected event: {event}")
 
 
 def extract_metadata(agent_lines: List[str]) -> Tuple[Dict[str, str], List[str]]:

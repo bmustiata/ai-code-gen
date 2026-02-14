@@ -30,7 +30,6 @@ async def agent_mode(workspace: str) -> None:
             if user_input.lower() == "quit":
                 exit_program()
 
-            print("⚙️ running custom query ... ")
             await run_agent(session, user_input)
     except KeyboardInterrupt:
         # Handle Ctrl+C gracefully
