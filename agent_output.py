@@ -59,5 +59,5 @@ class AgentPrintout:
         self._print_status()
 
     def _print_status(self):
-        print(f"{self._status.ljust(119)}", end='')
+        print(f" {self._status.ljust(119)}", end='')
         print("\r", end='')
