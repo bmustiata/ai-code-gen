@@ -58,6 +58,9 @@ class GeAgent:
         self.session = session
         self.agent_output = agent_output
 
+        self._last_status = None
+        self._last_printed = None
+
         local_model = OpenAIChatCompletionsModel(
             model=self.model_name,
             openai_client=local_client,
@@ -96,36 +99,61 @@ class GeAgent:
                     isinstance(event.data, ResponseOutputItemAddedEvent) and \
                     isinstance(event.data.item, ResponseFunctionToolCall):
                 self.agent_output.set_status(f"tool: {event.data.item.name}")
+                self._last_status = "tool"
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemDoneEvent) and \
                     isinstance(event.data.item, ResponseFunctionToolCall):
-                self.agent_output.set_status(f"")
-                # print in agent log?
-                # print(f"<-- tool: {event.data.item.name}")
+                if self._last_status == "tool":
+                    self.agent_output.set_status(f"")
+                    self._last_status = None
+
+                self.agent_output.print(f"\ncalled tool {event.data.item.name}")
+                self._last_printed = "tool"
+
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemAddedEvent) and \
                     isinstance(event.data.item, ResponseReasoningItem):
                 self.agent_output.set_status(f"thinking...")
+                self._last_status = "think"
+
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseOutputItemDoneEvent) and \
                     isinstance(event.data.item, ResponseReasoningItem):
-                self.agent_output.set_status(f"")
+                if self._last_status == "think":
+                    self.agent_output.set_status(f"")
+                    self._last_status = None
+
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseReasoningTextDeltaEvent):
+                if event.data.delta == "":
+                    continue
+
+                if self._last_printed != "think":
+                    self._last_printed = "think"
+                    self.agent_output.print("\n")
+
                 # print as dimmed text
                 self.agent_output.print(event.data.delta, ansi_before="\033[2m", ansi_after="\033[0m")
+
                 continue
 
             if isinstance(event, RawResponsesStreamEvent) and \
                     isinstance(event.data, ResponseTextDeltaEvent):
+                if event.data.delta == "":
+                    continue
+
+                if self._last_printed != "text":
+                    self._last_printed = "text"
+                    self.agent_output.print("\n")
+
                 yield event.data.delta
             else:
                 pass
