@@ -1,3 +1,12 @@
+class NoOpAgentPrintout:
+    """A class that does nothing. Used when no output is desired."""
+    def set_status(self, status: str) -> None:
+        pass
+
+    def print(self, text: str, ansi_before: str = "", ansi_after: str = "") -> None:
+        pass
+
+
 class AgentPrintout:
     """
     A class for printing output to a 120-character terminal with a status line at the end.
@@ -5,7 +14,9 @@ class AgentPrintout:
 
     It's designed to show thinking, and what happens in the agent currently.
     """
-    
+    # FIXME: in an ideal world, the terminal size should be read from the terminal itself
+    #        where this is running.
+
     def __init__(self):
         """Initialize the AgentPrintout with a column tracker."""
         self.current_column = 0

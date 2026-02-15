@@ -5,7 +5,7 @@ from openai import AsyncOpenAI
 from openai.types.responses import ResponseOutputItemAddedEvent, ResponseFunctionToolCall, ResponseOutputItemDoneEvent, \
     ResponseReasoningItem, ResponseTextDeltaEvent, ResponseReasoningTextDeltaEvent
 
-from agent_output import AgentPrintout
+from agent_output import AgentPrintout, NoOpAgentPrintout
 from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings, \
     RawResponsesStreamEvent
 
@@ -60,7 +60,7 @@ class GeAgent:
         self.instructions = "\n".join(instruction_lines)
         self.tools = tools
         self.session = session
-        self.agent_output = agent_output
+        self.agent_output = agent_output if agent_output else NoOpAgentPrintout()
 
         self._last_status = None
         self._last_printed = None
