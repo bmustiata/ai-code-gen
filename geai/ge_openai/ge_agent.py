@@ -113,7 +113,8 @@ class GeAgent:
                     self.agent_output.set_status(f"")
                     self._last_status = None
 
-                self.agent_output.print(f"\n🔧 calling {event.data.item.name}")
+                tool_arguments = event.data.item.arguments
+                self.agent_output.print(f"\n🔧 calling {event.data.item.name}({tool_arguments})")
                 self._last_printed = "tool"
 
                 continue

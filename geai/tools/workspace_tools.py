@@ -3,6 +3,7 @@ from typing import Optional, Dict
 
 from agents import function_tool
 
+import geai.tools.read_file_tool as read_file_tool
 from geai.ge_openai.ge_agent import GeAgent
 
 workspace_folder: str = os.getcwd()
@@ -48,17 +49,6 @@ def list_files(path: str) -> list[str]:
     return result
 
 
-@function_tool
-def read_file(file_name: str) -> str:
-    """
-    Reads the full content of the file. Use only when needed, files can be large.
-    If all you need are API signatures, just use the `read_api` tool.
-    :param file_name:
-    :return:
-    """
-    return read_file_impl(file_name)
-
-
 api_cache: Dict[str, str] = dict()
 
 
@@ -81,7 +71,7 @@ async def read_api(file_name: str) -> str:
                             output_type=str,
                             data={
                                "file_name": file_name,
-                               "file_content": read_file_impl(file_name)
+                               "file_content": read_file_tool.read_file_impl(file_name)
                            })
 
     # Run the agent to extract the API
@@ -151,19 +141,6 @@ def write_file_impl(file_name: str, content: str) -> str:
         return f"Failed to write {file_name}: {e}"
 
     return f"{file_name} WRITTEN successfully! DONE."
-
-
-def read_file_impl(file_name: str) -> str:
-    try:
-        full_file_name = ensure_file_path(file_name)
-
-        if not full_file_name:
-            return "FILE DOES NOT EXISTS"
-
-        with open(full_file_name, "rt", encoding="utf-8") as f:
-            return f.read()
-    except Exception as e:
-        return f"FAILED TO READ {file_name}: {e}"
 
 
 def ensure_file_path(workspace_file_name: str) -> Optional[str]:

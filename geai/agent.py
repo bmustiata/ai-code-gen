@@ -6,12 +6,13 @@ import click
 from agent_output import AgentPrintout
 from geai.ge_openai.ge_agent import GeAgent
 from geai.ge_openai.memory_session import InMemorySession
+from geai.tools.read_file_tool import read_file
 from tools import workspace_tools
 from tools.git_grep_tool import git_grep
 from tools.grep_tool import grep
-from tools.time_tools import sleep
-from tools.workspace_tools import write_file, list_files, read_file, read_api, patch_file
 from tools.sh_tool import run_sh_command
+from tools.time_tools import sleep
+from tools.workspace_tools import write_file, list_files, read_api, patch_file
 
 
 @click.command()
@@ -66,7 +67,7 @@ async def run_agent(session, user_input: str) -> str:
         agent_output=agent_output,
         tools=[
             git_grep,
-            grep,
+            # grep,
             list_files,
             patch_file,
             read_api,

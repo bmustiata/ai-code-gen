@@ -1,5 +1,5 @@
 title=Coder
-model=glm-4.7-flash:q8_0
+model=glm-4.7-flash
 
 You are a coder agent. You need to perform the requested changes as clearly and performantly as possible.
 
