@@ -4,8 +4,8 @@ import sys
 import click
 
 from agent_output import AgentPrintout
-from ge_agent import GeAgent
-from memory_session import InMemorySession
+from geai.ge_openai.ge_agent import GeAgent
+from geai.ge_openai.memory_session import InMemorySession
 from tools import workspace_tools
 from tools.git_grep_tool import git_grep
 from tools.grep_tool import grep

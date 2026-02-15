@@ -5,7 +5,7 @@ from openai import AsyncOpenAI
 from openai.types.responses import ResponseOutputItemAddedEvent, ResponseFunctionToolCall, ResponseOutputItemDoneEvent, \
     ResponseReasoningItem, ResponseTextDeltaEvent, ResponseReasoningTextDeltaEvent
 
-from agent_output import AgentPrintout, NoOpAgentPrintout
+from geai.agent_output import AgentPrintout, NoOpAgentPrintout
 from agents import Agent, Runner, OpenAIChatCompletionsModel, AgentOutputSchemaBase, ModelSettings, \
     RawResponsesStreamEvent
 

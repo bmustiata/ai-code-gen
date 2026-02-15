@@ -2,8 +2,8 @@ import subprocess
 
 from agents import function_tool
 
-from tools import workspace_tools
-from tools.grep_tool import GrepResult, GrepLine
+from geai.tools import workspace_tools
+from geai.tools.grep_tool import GrepResult, GrepLine
 
 
 @function_tool

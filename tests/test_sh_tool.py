@@ -1,8 +1,7 @@
 """
 Tests for the shell command execution functionality.
 """
-import pytest
-from tools.sh_tool import run_sh_command_impl, RunShResult
+from geai.tools.sh_tool import run_sh_command_impl, RunShResult
 
 
 class TestRunShCommandImpl:

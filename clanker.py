@@ -3,11 +3,11 @@ import asyncio
 import click
 
 import readinput
-from tools import workspace_tools
+from geai.tools import workspace_tools
 from codegen import generate_file, check_generated_file, fix_failed_code
-from ge_agent import GeAgent
+from geai.ge_openai.ge_agent import GeAgent
 from structs import FileResult, SpecCheckResult, FileList
-from tools.workspace_tools import read_file_impl, write_file_impl
+from geai.tools.workspace_tools import read_file_impl, write_file_impl
 
 
 @click.command()

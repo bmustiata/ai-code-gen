@@ -1,6 +1,6 @@
 import structs
-from tools import workspace_tools
-from ge_agent import GeAgent
+from geai.tools import workspace_tools
+from geai.ge_openai.ge_agent import GeAgent
 
 
 async def generate_file(file: structs.FileInfo) -> str:

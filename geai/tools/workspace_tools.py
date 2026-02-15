@@ -3,7 +3,7 @@ from typing import Optional, Dict
 
 from agents import function_tool
 
-from ge_agent import GeAgent
+from geai.ge_openai.ge_agent import GeAgent
 
 workspace_folder: str = os.getcwd()
 

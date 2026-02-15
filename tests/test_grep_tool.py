@@ -3,7 +3,7 @@ Tests for the grep functionality.
 """
 import uuid
 
-from tools.grep_tool import grep_impl, GrepResult, GrepLine
+from geai.tools.grep_tool import grep_impl, GrepResult, GrepLine
 
 
 class TestGrepImpl:

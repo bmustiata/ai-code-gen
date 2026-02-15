@@ -5,7 +5,7 @@ from typing import List, Optional
 from agents import function_tool
 from pydantic import BaseModel
 
-from tools import workspace_tools
+from geai.tools import workspace_tools
 
 
 class GrepLine(BaseModel):

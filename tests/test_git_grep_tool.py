@@ -3,7 +3,7 @@ Tests for the git grep functionality.
 """
 import uuid
 
-from tools.git_grep_tool import git_grep_impl, GrepResult, GrepLine
+from geai.tools.git_grep_tool import git_grep_impl, GrepResult, GrepLine
 
 
 class TestGitGrepImpl:
