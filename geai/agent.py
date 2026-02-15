@@ -62,7 +62,7 @@ async def run_agent(session, user_input: str) -> str:
     agent_output = AgentPrintout()
 
     local_agent = GeAgent(
-        "instructions/agent/agent.txt",
+        "../instructions/agent/agent.txt",
         agent_output=agent_output,
         tools=[
             git_grep,
@@ -84,7 +84,6 @@ async def run_agent(session, user_input: str) -> str:
 
     async for token in local_agent.async_run(user_input):
         result += token
-        agent_output.print(token)
 
     return result
 

@@ -158,6 +158,8 @@ class GeAgent:
                     self._last_printed = "text"
                     self.agent_output.print("\n")
 
+                self.agent_output.print(event.data.delta)
+
                 yield event.data.delta
             else:
                 pass

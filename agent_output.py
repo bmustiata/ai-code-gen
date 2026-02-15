@@ -2,6 +2,8 @@ class AgentPrintout:
     """
     A class for printing output to a 120-character terminal with a status line at the end.
     The cursor always stays at the bottom left after operations.
+
+    It's designed to show thinking, and what happens in the agent currently.
     """
     
     def __init__(self):
@@ -28,7 +30,11 @@ class AgentPrintout:
         If a newline is in the text, the column is reset to 0.
         
         Args:
-            text: The text to print
+            :param text: The text to print
+            :param ansi_before:  ANSI control codes to print before the string. These characters
+                  counted against the screen width for text wrapping.
+            :param ansi_after: ANSI control codes to print after the string. These characters
+                  counted against the screen width for text wrapping.
         """
         # Move cursor one line up
         print("\033[1A", end='')
@@ -49,7 +55,7 @@ class AgentPrintout:
 
             if self.current_column == 120:
                 print("\n\033[2K", end="", flush=False)
-                self.current_column = 0
+                self.current_column = 1  # the column will be 1, since we'll print the character
 
             print(c, end='')
 
