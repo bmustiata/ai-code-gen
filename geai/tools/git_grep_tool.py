@@ -2,7 +2,7 @@ import subprocess
 
 from agents import function_tool
 
-from geai.tools import workspace_tools
+from geai.tools import workspace
 from geai.tools.grep_tool import GrepResult, GrepLine
 
 
@@ -32,12 +32,12 @@ def git_grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
         # Check if we're in a git repository
         subprocess.run(
             ["git", "rev-parse", "--git-dir"],
-            cwd=workspace_tools.workspace_folder,
+            cwd=workspace.folder,
             capture_output=True,
             check=True
         )
 
-        # Build git grep command with workspace restriction
+        # Build git grep command with workspace.py restriction
         git_grep_args = ["git", "grep"]
 
         if is_regex:
@@ -52,7 +52,7 @@ def git_grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
         # Run git grep command
         result = subprocess.run(
             git_grep_args,
-            cwd=workspace_tools.workspace_folder,
+            cwd=workspace.folder,
             capture_output=True,
             text=True,
             check=True
@@ -69,16 +69,16 @@ def git_grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
                     line_num = int(parts[1])
                     matched_line = parts[2]
 
-                    # Convert absolute path to relative path to hide workspace location
-                    if file_name.startswith(workspace_tools.workspace_folder):
-                        relative_path = file_name[len(workspace_tools.workspace_folder):].lstrip('/')
+                    # Convert absolute path to relative path to hide workspace.py location
+                    if file_name.startswith(workspace.folder):
+                        relative_path = file_name[len(workspace.folder):].lstrip('/')
                         lines.append(GrepLine(
                             file_name=relative_path,
                             line=line_num,
                             matched_line=matched_line
                         ))
                     else:
-                        # Keep as-is if it's not in workspace (shouldn't happen with restriction)
+                        # Keep as-is if it's not in workspace.py (shouldn't happen with restriction)
                         lines.append(GrepLine(
                             file_name=file_name,
                             line=line_num,

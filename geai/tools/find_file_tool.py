@@ -22,7 +22,7 @@ class FindFileListResult(BaseModel):
 
 def find_file_impl(starting_folder: str, filename_pattern: str, file_type: str) -> FindFileListResult:
     """
-    Internal implementation of find_file - searches for files within the workspace directory.
+    Internal implementation of find_file - searches for files within the workspace.folder directory.
     
     This function is used by the find_file tool and can be tested independently.
     
@@ -133,7 +133,7 @@ def find_file_impl(starting_folder: str, filename_pattern: str, file_type: str) 
 @function_tool
 def find_file(starting_folder: str, filename_pattern: str, file_type: str) -> FindFileListResult:
     """
-    Searches for files within the workspace directory.
+    Searches for files within the workspace.folder directory.
     
     :param starting_folder: The folder to start searching from
     :param filename_pattern: The pattern to match filenames (supports * and ? wildcards)

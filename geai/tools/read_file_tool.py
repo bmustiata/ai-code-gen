@@ -32,6 +32,7 @@ def read_file_impl(file_name: str) -> ReadFileResult:
     """
     try:
         full_file_name = workspace_tools.ensure_file_path(file_name)
+        print(f"reading: {full_file_name}")
 
         if not full_file_name:
             return ReadFileResult(

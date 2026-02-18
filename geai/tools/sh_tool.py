@@ -3,7 +3,8 @@ import subprocess
 
 from agents import function_tool
 from pydantic import BaseModel
-from geai.tools import workspace_tools
+
+from geai.tools import workspace
 
 
 class RunShResult(BaseModel):
@@ -16,7 +17,7 @@ class RunShResult(BaseModel):
 
 def run_sh_command_impl(command: str) -> RunShResult:
     """
-    Internal implementation of running a shell command within the workspace directory.
+    Internal implementation of running a shell command within the workspace.py directory.
     
     This function contains the actual logic for executing shell commands and should be
     tested directly. The public `run_sh_command` function is a delegate wrapper.
@@ -25,10 +26,10 @@ def run_sh_command_impl(command: str) -> RunShResult:
     :return: RunShResult containing stdout, stderr, return_code, and success status
     """
     try:
-        # Get the absolute path of the workspace folder
-        workspace_path = os.path.abspath(workspace_tools.workspace_folder)
+        # Get the absolute path of the workspace.py folder
+        workspace_path = os.path.abspath(workspace.folder)
         
-        # Run the command within the workspace directory
+        # Run the command within the workspace.py directory
         result = subprocess.run(
             command,
             shell=True,
@@ -54,9 +55,9 @@ def run_sh_command_impl(command: str) -> RunShResult:
 
 
 @function_tool
-def run_sh_command(command: str) -> RunShResult:
+def execute(command: str) -> RunShResult:
     """
-    Run a shell command within the workspace directory.
+    Run a shell command within the workspace.py directory.
     
     :param command: The shell command to execute
     :return: RunShResult containing stdout, stderr, return_code, and success status

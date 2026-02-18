@@ -5,7 +5,7 @@ from typing import List, Optional
 from agents import function_tool
 from pydantic import BaseModel
 
-from geai.tools import workspace_tools
+from geai.tools import workspace_tools, workspace
 
 
 class GrepLine(BaseModel):
@@ -24,7 +24,7 @@ class GrepResult(BaseModel):
 
 def grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
     """
-    Internal implementation of grep - searches for text in files within the workspace directory.
+    Internal implementation of grep - searches for text in files within the workspace.py directory.
     
     This function is used by the grep tool and can be tested independently.
     
@@ -33,7 +33,7 @@ def grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
     :return: GrepResult containing matched lines or error information
     """
     try:
-        full_workspace_path = os.path.abspath(workspace_tools.workspace_folder)
+        full_workspace_path = os.path.abspath(workspace.folder)
         
         if not os.path.isdir(full_workspace_path):
             return GrepResult(
@@ -111,7 +111,7 @@ def grep_impl(search_text: str, is_regex: bool = False) -> GrepResult:
 @function_tool
 def grep(search_text: str, is_regex: bool = False) -> GrepResult:
     """
-    Searches for text in files within the workspace directory.
+    Searches for text in files within the workspace.py directory.
     
     :param search_text: The text to search for
     :param is_regex: Whether to treat search_text as a regular expression

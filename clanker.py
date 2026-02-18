@@ -2,26 +2,28 @@ import asyncio
 
 import click
 
+import geai.tools.workspace
 import readinput
-from geai.tools import workspace_tools
 from codegen import generate_file, check_generated_file, fix_failed_code
 from geai.ge_openai.ge_agent import GeAgent
+from geai.tools import workspace_tools
+from geai.tools.read_file_tool import read_file_impl
+from geai.tools.workspace_tools import write_file_impl
 from structs import FileResult, SpecCheckResult, FileList
-from geai.tools.workspace_tools import read_file_impl, write_file_impl
 
 
 @click.command()
 @click.option("--user-spec",
               help="User specification file. What do you want to be generated?")
-@click.option("--workspace", "-w",
+@click.option("--workspace.py", "-w",
               help="Workspace folder where to create the files.",
-              default="workspace")
+              default="workspace.py")
 def event_loop_main(user_spec: str, workspace: str) -> None:
    asyncio.run(spec_mode(user_spec, workspace))
 
 
 async def spec_mode(user_spec: str, workspace: str) -> None:
-    workspace_tools.workspace_folder = workspace
+    geai.tools.workspace.folder = workspace
 
     if user_spec:
         with open(user_spec, "rt", encoding="utf-8") as f:

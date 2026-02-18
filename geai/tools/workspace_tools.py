@@ -5,8 +5,7 @@ from agents import function_tool
 
 import geai.tools.read_file_tool as read_file_tool
 from geai.ge_openai.ge_agent import GeAgent
-
-workspace_folder: str = os.getcwd()
+from geai.tools import workspace
 
 
 @function_tool
@@ -151,7 +150,7 @@ def ensure_file_path(workspace_file_name: str) -> Optional[str]:
     if workspace_file_name and workspace_file_name.startswith("/"):
         workspace_file_name = "." + workspace_file_name
 
-    full_file_name = os.path.abspath(os.path.join(workspace_folder, workspace_file_name))
+    full_file_name = os.path.abspath(os.path.join(workspace.folder, workspace_file_name))
     full_dir_name = os.path.dirname(full_file_name)
     os.makedirs(full_dir_name, exist_ok=True)
 
@@ -160,12 +159,12 @@ def ensure_file_path(workspace_file_name: str) -> Optional[str]:
 
 def get_full_file_name(workspace_file_name: str) -> str:
     """
-    Computes the absolute path of a workspace file
+    Computes the absolute path of a workspace.py file
     """
     if workspace_file_name and workspace_file_name.startswith("/"):
         workspace_file_name = "." + workspace_file_name
 
-    full_file_name = os.path.abspath(os.path.join(workspace_folder, workspace_file_name))
+    full_file_name = os.path.abspath(os.path.join(workspace.folder, workspace_file_name))
 
     return full_file_name
 

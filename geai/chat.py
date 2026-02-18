@@ -34,7 +34,7 @@ async def agent_mode(workspace: str, user_prompt: str) -> None:
         if user_prompt:
             user_input = user_prompt
         else:
-            print("🗑️ AGENT> ", end="", flush=True)
+            print("💬️ CHAT> ", end="", flush=True)
             user_input = sys.stdin.readline().strip()
 
         # Check if user wants to quit
@@ -45,7 +45,7 @@ async def agent_mode(workspace: str, user_prompt: str) -> None:
 
         # Continue reading from stdin for subsequent messages
         while True:
-            print("🗑️ AGENT> ", end="", flush=True)
+            print("💬️ CHAT> ", end="", flush=True)
             user_input = sys.stdin.readline().strip()
 
             # Check if user wants to quit
@@ -62,18 +62,16 @@ async def run_agent(session, user_input: str) -> str:
     agent_output = AgentPrintout()
 
     local_agent = GeAgent(
-        "instructions/agent/chat.txt",
+        "instructions/chat/chat.txt",
         agent_output=agent_output,
         tools=[
             git_grep,
             # grep,
             list_files,
-            patch_file,
             read_api,
             read_file,
             execute,
             sleep,
-            write_file,
         ],
         session=session,
         data={
