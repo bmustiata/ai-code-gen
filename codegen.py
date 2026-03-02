@@ -1,6 +1,7 @@
 import structs
-from geai.tools import workspace_tools
 from geai.ge_openai.ge_agent import GeAgent
+from geai.tools import workspace_tools
+from geai.tools.read_file_tool import read_file_impl
 
 
 async def generate_file(file: structs.FileInfo) -> str:
@@ -13,7 +14,7 @@ async def generate_file(file: structs.FileInfo) -> str:
                     data={
                         "file_name": file.filename,
                         "file_description": file.description,
-                        "spec": workspace_tools.read_file_impl("/SPEC.md"),
+                        "spec": read_file_impl("/SPEC.md").content,
                     },
                     tools=[
                         workspace_tools.write_file,
@@ -22,7 +23,7 @@ async def generate_file(file: structs.FileInfo) -> str:
                     )
 
     await coder.run(f"Write the {file.filename}")
-    return workspace_tools.read_file_impl(file.filename)
+    return read_file_impl(file.filename).content
 
 
 async def check_generated_file(file: structs.FileInfo) -> structs.SpecCheckResult:
@@ -30,8 +31,8 @@ async def check_generated_file(file: structs.FileInfo) -> structs.SpecCheckResul
                     data={
                         "file_name": file.filename,
                         "file_description": file.description,
-                        "spec": workspace_tools.read_file_impl("/SPEC.md"),
-                        "file_content": workspace_tools.read_file_impl(file.filename),
+                        "spec": read_file_impl("/SPEC.md").content,
+                        "file_content": read_file_impl(file.filename).content,
                     },
                     tools=[
                         workspace_tools.read_api,

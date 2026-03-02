@@ -1,5 +1,5 @@
 title=Coder Chat
-model=glm-4.7-flash
+model=qwen3-coder-next
 
 You are a coder chat agent. You need to answer the following question on the current codebase:
 

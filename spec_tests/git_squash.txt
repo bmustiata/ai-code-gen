@@ -1,0 +1,35 @@
+Implement a python program that does squash git commits into a single commit. This should
+be written as a single file called git_squash.py. Don't create a `pyproject.toml`/`requirements.txt`,
+I will take care click already exists in the python runtime.
+
+## How it works
+
+Let's say there's a `git log` like this:
+
+```
+7c790e8 (main) Functions register str constants instead of char* pointer for function names.
+ae265a5 Some exception ideation (#5)
+e07fc99 Implement Exceptions
+250c74b (origin/main) Don't show SLF4J warning on start
+f93f523 Merge pull request #24 from caffc/feature/13-string-escapes
+84eabbf Implemented string escapes (#13)
+```
+
+If the user calls `git-squash.py e07fc99`, what will happen is the last two commits (7c790e8 and ae265a5)
+will be squashed into the target commit, and the message of the e07fc99 commit will be used as the message
+for the full squash.
+
+So now the history would be:
+
+```
+<newhash> (main) Implement Exceptions
+250c74b (origin/main) Don't show SLF4J warning on start
+f93f523 Merge pull request #24 from caffc/feature/13-string-escapes
+84eabbf Implemented string escapes (#13)
+```
+
+The program should refuse to work if there's any uncommitted changes in the git repo.
+
+Optionally it allows `-m/--message` to set the new git commit message.
+
+Use click to parse the python arguments.

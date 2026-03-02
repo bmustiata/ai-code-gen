@@ -15,7 +15,7 @@ from structs import FileResult, SpecCheckResult, FileList
 @click.command()
 @click.option("--user-spec",
               help="User specification file. What do you want to be generated?")
-@click.option("--workspace.py", "-w",
+@click.option("--workspace", "-w",
               help="Workspace folder where to create the files.",
               default="workspace.py")
 def event_loop_main(user_spec: str, workspace: str) -> None:
@@ -32,22 +32,22 @@ async def spec_mode(user_spec: str, workspace: str) -> None:
         user_input = readinput.read_multi(" SPEC", bgcolor="green", bold=True)
 
     print("⚙️ designing a spec ... ")
-    #spec_result = await create_specification(user_input)
-    spec_result = read_file_impl("/SPEC.md")
+    spec_result = await create_specification(user_input)
+    spec_result = read_file_impl("/SPEC.md").content
 
-    while True:
-        print("⚙️ (re-)checking the specification ... ")
-        check_spec = await check_generated_specification(user_input, spec_result)
-
-        if check_spec.valid:
-            break
-
-        print(f"  ❌ spec was not valid:\n{check_spec.reason}")
-
-        print("⚙️ fixing the specification ... ")
-        spec_result = await fix_failed_specification(user_input, spec_result, check_spec)
-        print(spec_result)
-
+    # while True:
+    #     print("⚙️ (re-)checking the specification ... ")
+    #     check_spec = await check_generated_specification(user_input, spec_result)
+    #
+    #     if check_spec.valid:
+    #         break
+    #
+    #     print(f"  ❌ spec was not valid:\n{check_spec.reason}")
+    #
+    #     print("⚙️ fixing the specification ... ")
+    #     spec_result = await fix_failed_specification(user_input, spec_result, check_spec)
+    #     print(spec_result)
+    #
     print("⚙️ making a list of the files to be created ... ")
     file_list = await extract_file_list()
 
@@ -114,7 +114,7 @@ async def fix_failed_specification(user_input: str, spec_result: str, check_spec
 async def extract_file_list() -> FileList:
     file_lister = GeAgent("instructions/spec/file_lister.txt",
                           data={
-                              "spec": read_file_impl("/SPEC.md"),
+                              "spec": read_file_impl("/SPEC.md").content,
                           },
                           output_type=FileList)
     return await file_lister.run("Read the list of files")

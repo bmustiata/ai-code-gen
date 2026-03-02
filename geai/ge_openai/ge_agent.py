@@ -56,6 +56,7 @@ class GeAgent:
 
         self.title = metadata['title']
         self.model_name = metadata['model']
+        self.model_name = "qwen3-coder-next"
 
         self.instructions = "\n".join(instruction_lines)
         self.tools = tools
